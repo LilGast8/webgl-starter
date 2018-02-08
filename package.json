@@ -1,0 +1,40 @@
+{
+  "name": "webgl-starter",
+  "description": "",
+  "version": "0.0.1",
+  "author": {
+    "name": "Gaston Bouchayer",
+    "url": "http://www.gastonbouchayer.com"
+  },
+  "main": "gulpfile.js",
+  "dependencies": {},
+  "devDependencies": {
+    "browserify": "^14.3.0",
+    "browserify-shim": "^3.8.14",
+    "glsl-map": "^1.0.1",
+    "glslify": "^6.0.2",
+    "gulp": "^3.9.1",
+    "gulp-jshint": "^2.0.4",
+    "gulp-livereload": "^3.8.1",
+    "gulp-notify": "^3.0.0",
+    "gulp-plumber": "^1.1.0",
+    "jshint": "^2.9.4",
+    "jshint-stylish": "^2.2.1",
+    "path": "^0.12.7",
+    "require-dir": "^0.3.1",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.9.0"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browser": {
+    "zepto": "./dev/assets/js/vendor/zepto.min.js"
+  },
+  "browserify-shim": {
+    "zepto": "$"
+  }
+}
