@@ -1,26 +1,27 @@
 'use strict';
 
 
-global.THREE	= require( 'three.js/three.min' );
-// require( 'three.js/OrbitControls' );
-var Stats		= require( 'stats.min' );
-// var DatGUI		= require( 'DatGUI' );
-var glslify		= require( 'glslify' );
+var MainView	= require( 'MainView' );
+var WebGLScene	= require( 'WebGLScene' );
 
 
 function App() {
-	this.stats		= null;
 	
-	this.wW			= null;
-	this.wH			= null;
 }
 
 
 App.prototype.init = function() {
 	console.log( '🐣 App.init()' );
 	// this.initDOM();
-	// this.initEl();
+	this.initEl();
 	// this.bindEvents();
+	
+};
+
+
+App.prototype.initEl = function() {
+	this.webGLScene = new WebGLScene();
+	this.webGLScene.init();
 };
 
 

@@ -1,7 +1,9 @@
 'use strict';
 
 
-var signals = require( 'signals' );
+var signals	= require( 'signals' );
+
+var Config	= require( 'Config' );
 
 
 function CustomEvent() {
@@ -14,7 +16,7 @@ function CustomEvent() {
 
 CustomEvent.prototype.bind = function( name, fct, context ) {
 	if ( !name || !fct ) {
-		if ( !STF.Config.IS_PROD ) {
+		if ( !Config.IS_PROD ) {
 			var missingParams;
 			
 			if ( !name && !fct )
@@ -30,7 +32,7 @@ CustomEvent.prototype.bind = function( name, fct, context ) {
 		return;
 	}
 	
-	if ( !context && !STF.Config.IS_PROD )
+	if ( !context && !Config.IS_PROD )
 		console.warn( 'Bind "' + name + '" custom event without context.' );
 	
 	if ( this.e[ name ] === undefined ) // if the custom event doesn't exist, create it
@@ -42,7 +44,7 @@ CustomEvent.prototype.bind = function( name, fct, context ) {
 
 CustomEvent.prototype.unbind = function( name, fct, context ) {
 	if ( !name ) {
-		if ( !STF.Config.IS_PROD )
+		if ( !Config.IS_PROD )
 			console.warn( 'You must to define the name of the custom event you want to unbind.' );
 		
 		return;
@@ -65,7 +67,7 @@ CustomEvent.prototype.unbind = function( name, fct, context ) {
 
 CustomEvent.prototype.dispatch = function( name, params ) {
 	if ( this.e[ name ] === undefined ) { // if the event is not registred
-		if ( !STF.Config.IS_PROD && !this.isWarningDispatched ) {
+		if ( !Config.IS_PROD && !this.isWarningDispatched ) {
 			console.warn( 'Trying to dispath "' + name + '" custom event which is undefined.' );
 			
 			this.isWarningDispatched = true;
