@@ -163,7 +163,7 @@ CustomEvent.prototype.dispatch = function( name, params ) {
 module.exports = CustomEvent;
 
 
-},{"Config":2,"signals":12}],4:[function(require,module,exports){
+},{"Config":2,"signals":13}],4:[function(require,module,exports){
 'use strict';
 
 
@@ -240,7 +240,7 @@ var main = new Main();
 $( main.init.bind( main ) );
 
 
-},{"App":1,"MainView":6,"zepto":16}],6:[function(require,module,exports){
+},{"App":1,"MainView":6,"zepto":17}],6:[function(require,module,exports){
 'use strict';
 
 
@@ -249,6 +249,7 @@ require( 'greensock/TweenMax' );
 var CustomEvent		= require( 'CustomEvent' );
 var Config			= require( 'Config' );
 var FPSStats		= require( 'utils/FPSStats' );
+var Math_			= require( 'utils/Math' );
 
 
 function MainView() {
@@ -321,7 +322,7 @@ MainView.prototype.initEl = function() {
 MainView.prototype.bindEvents = function() {
 	this.$window.on( 'resize', $.proxy( this.resize, this ) );
 	TweenLite.ticker.addEventListener( 'tick', this.raf, this );
-	// this.$window.on( 'mousemove', $.proxy( this.mouseMove, this ) );
+	this.$window.on( 'mousemove', $.proxy( this.mouseMove, this ) );
 	// this.$window.on( 'mousedown', $.proxy( this.mouseDown, this ) );
 	// this.$window.on( 'mouseup', $.proxy( this.mouseUp, this ) );
 	// this.$window.on( 'touchmove', $.proxy( this.touchMove, this ) );
@@ -370,18 +371,93 @@ MainView.prototype.raf = function() {
 
 
 var _setRafProps = function() {
-	// this.sY		= this.$window[0].scrollY || this.$window[0].pageYOffset;
-	// this.siY	= STF_math_getInertia( this.sY, this.siY, this.SCROLL_INERTIA, true );
+	this.sY		= this.$window[0].scrollY || this.$window[0].pageYOffset;
+	this.siY	= Math_.getInertia( this.sY, this.siY, this.SCROLL_INERTIA, true );
 	
-	// this.miX	= STF_math_getInertia( this.mX, this.miX, this.MOUSE_INERTIA, true );
-	// this.miY	= STF_math_getInertia( this.mY, this.miY, this.MOUSE_INERTIA, true );
+	this.miX	= Math_.getInertia( this.mX, this.miX, this.MOUSE_INERTIA, true );
+	this.miY	= Math_.getInertia( this.mY, this.miY, this.MOUSE_INERTIA, true );
+};
+
+
+MainView.prototype.mouseMove = function( e ) {
+	this.mX = e.clientX;
+	this.mY = e.clientY;
+	
+	// console.log( 'MainView _mouseMove()', this.mX, this.mY );
+	
+	this.dispatch( this.E.MOUSE_MOVE );
+};
+
+
+MainView.prototype.mouseDown = function() {
+	this.dispatch( this.E.MOUSE_DOWN );
+};
+
+
+MainView.prototype.mouseUp = function() {
+	this.dispatch( this.E.MOUSE_UP );
+};
+
+
+MainView.prototype.touchMove = function( e ) {
+	e.preventDefault();
+	
+	// Zepto
+	this.tX = e.touches[0].pageX;
+	this.tY = e.touches[0].pageY;
+	// jQuery
+	// this.tX = e.originalEvent.touches[0].pageX;
+	// this.tY = e.originalEvent.touches[0].pageY;
+	
+	this.dispatch( this.E.TOUCH_MOVE );
+};
+
+
+MainView.prototype.touchStart = function() {
+	this.dispatch( this.E.TOUCH_START );
+};
+
+
+MainView.prototype.touchEnd = function() {
+	this.dispatch( this.E.TOUCH_END );
+};
+
+
+MainView.prototype.windowOut = function() {
+	this.isWindowFocused = false;
+	
+	this.dispatch( this.E.WINDOW_OUT );
+};
+
+
+MainView.prototype.windowIn = function() {
+	this.isWindowFocused = true;
+	
+	this.dispatch( this.E.WINDOW_IN );
+};
+
+
+MainView.prototype.setScrollY = function( scrollY ) {
+	this.sY		= scrollY;
+	this.siY	= scrollY;
+	
+	this.$window[0].scrollTo( 0, scrollY );
+};
+
+
+MainView.prototype.setBodyHeight = function( bodyH ) {
+	if ( bodyH === null )
+		bodyH = this.$pageCont.height();
+	
+	this.bH						= bodyH;
+	this.$body[0].style.height	= this.bH + 'px';
 };
 
 
 module.exports = new MainView();
 
 
-},{"Config":2,"CustomEvent":3,"greensock/TweenMax":11,"utils/FPSStats":10}],7:[function(require,module,exports){
+},{"Config":2,"CustomEvent":3,"greensock/TweenMax":12,"utils/FPSStats":10,"utils/Math":11}],7:[function(require,module,exports){
 'use strict';
 
 
@@ -470,7 +546,7 @@ var _initObject = function() {
 module.exports = Sphere;
 
 
-},{"MainView":6,"abstracts/AbstractView":9,"glslify":17}],8:[function(require,module,exports){
+},{"MainView":6,"abstracts/AbstractView":9,"glslify":18}],8:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -604,7 +680,7 @@ module.exports = WebGLScene;
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"Config":2,"MainView":6,"abstracts/AbstractView":9,"three.js/OrbitControls":14,"three.js/three.min":15}],9:[function(require,module,exports){
+},{"Config":2,"MainView":6,"abstracts/AbstractView":9,"three.js/OrbitControls":15,"three.js/three.min":16}],9:[function(require,module,exports){
 'use strict';
 
 
@@ -787,7 +863,97 @@ FPSStats.prototype.end = function() {
 module.exports = new FPSStats();
 
 
-},{"stats.min":13}],11:[function(require,module,exports){
+},{"stats.min":14}],11:[function(require,module,exports){
+'use strict';
+
+
+function Math_() {}
+
+
+Math_.getElPos = function( elW, elH, contW, contH ) {
+	var elRatio		= elW / elH;
+	var contRatio	= contW / contH;
+	var pos			= {
+		x: 0,
+		y: 0,
+		w: 0,
+		h: 0
+	};
+	
+	if ( elRatio < contRatio ) {
+		pos.w = contW;
+		pos.h = Math.round( pos.w / elRatio );
+		pos.y = Math.round( - ( pos.h - contH ) / 2 );
+	}
+	else {
+		pos.h = contH;
+		pos.w = Math.round ( pos.h * elRatio );
+		pos.x = Math.round ( - ( pos.w - contW ) / 2 );
+	}
+	
+	return pos;
+};
+
+
+Math_.getCropPos = function( elW, elH, contW, contH ) {
+	var elRatio		= elW / elH;
+	var contRatio	= contW / contH;
+	var pos			= {
+		x: 0,
+		y: 0,
+		w: 0,
+		h: 0
+	};
+	
+	if ( elRatio < contRatio ) {
+		pos.w = elW;
+		pos.h = Math.round( pos.w / contRatio );
+		pos.y = Math.round( - ( pos.h - elH ) / 2 );
+	}
+	else {
+		pos.h = elH;
+		pos.w = Math.round ( pos.h * contRatio );
+		pos.x = Math.round ( - ( pos.w - elW ) / 2 );
+	}
+	
+	return pos;
+};
+
+
+Math_.degToRad = function( deg ) {
+	return deg * Math.PI / 180;
+};
+
+
+Math_.radToDeg = function( rad ) {
+	return rad * 180 / Math.PI;
+};
+
+
+Math_.getHypotenuse = function( widthA, widthB ) {
+	return Math.sqrt( widthA * widthA + widthB * widthB );
+};
+
+
+Math_.getInertia = function( destValue, value, inertia, hasMinStep ) {
+	var valueToAdd;
+	
+	if ( hasMinStep )
+		valueToAdd	= Math.abs ( ( destValue - value ) * inertia ) >= 0.01 ? ( destValue - value ) * inertia : destValue - value;
+	else
+		valueToAdd	= ( destValue - value ) * inertia;
+	
+	value			+= valueToAdd;
+	
+	
+	return value;
+};
+
+
+module.exports = Math_;
+
+
+},{}],12:[function(require,module,exports){
 (function (global){
 /*!
  * VERSION: 1.20.3
@@ -8752,7 +8918,7 @@ if (_gsScope._gsDefine) { _gsScope._gsQueue.pop()(); } //necessary in case Tween
 
 })((typeof(module) !== "undefined" && module.exports && typeof(global) !== "undefined") ? global : this || window, "TweenMax");
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /*jslint onevar:true, undef:true, newcap:true, regexp:true, bitwise:true, maxerr:50, indent:4, white:false, nomen:false, plusplus:false */
 /*global define:false, require:false, exports:false, module:false, signals:false */
 
@@ -9199,14 +9365,14 @@ if (_gsScope._gsDefine) { _gsScope._gsQueue.pop()(); } //necessary in case Tween
 
 }(this));
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 // stats.js - http://github.com/mrdoob/stats.js
 (function(f,e){"object"===typeof exports&&"undefined"!==typeof module?module.exports=e():"function"===typeof define&&define.amd?define(e):f.Stats=e()})(this,function(){var f=function(){function e(a){c.appendChild(a.dom);return a}function u(a){for(var d=0;d<c.children.length;d++)c.children[d].style.display=d===a?"block":"none";l=a}var l=0,c=document.createElement("div");c.style.cssText="position:fixed;top:0;left:0;cursor:pointer;opacity:0.9;z-index:10000";c.addEventListener("click",function(a){a.preventDefault();
 u(++l%c.children.length)},!1);var k=(performance||Date).now(),g=k,a=0,r=e(new f.Panel("FPS","#0ff","#002")),h=e(new f.Panel("MS","#0f0","#020"));if(self.performance&&self.performance.memory)var t=e(new f.Panel("MB","#f08","#201"));u(0);return{REVISION:16,dom:c,addPanel:e,showPanel:u,begin:function(){k=(performance||Date).now()},end:function(){a++;var c=(performance||Date).now();h.update(c-k,200);if(c>g+1E3&&(r.update(1E3*a/(c-g),100),g=c,a=0,t)){var d=performance.memory;t.update(d.usedJSHeapSize/
 1048576,d.jsHeapSizeLimit/1048576)}return c},update:function(){k=this.end()},domElement:c,setMode:u}};f.Panel=function(e,f,l){var c=Infinity,k=0,g=Math.round,a=g(window.devicePixelRatio||1),r=80*a,h=48*a,t=3*a,v=2*a,d=3*a,m=15*a,n=74*a,p=30*a,q=document.createElement("canvas");q.width=r;q.height=h;q.style.cssText="width:80px;height:48px";var b=q.getContext("2d");b.font="bold "+9*a+"px Helvetica,Arial,sans-serif";b.textBaseline="top";b.fillStyle=l;b.fillRect(0,0,r,h);b.fillStyle=f;b.fillText(e,t,v);
 b.fillRect(d,m,n,p);b.fillStyle=l;b.globalAlpha=.9;b.fillRect(d,m,n,p);return{dom:q,update:function(h,w){c=Math.min(c,h);k=Math.max(k,h);b.fillStyle=l;b.globalAlpha=1;b.fillRect(0,0,r,m);b.fillStyle=f;b.fillText(g(h)+" "+e+" ("+g(c)+"-"+g(k)+")",t,v);b.drawImage(q,d+a,m,n-a,p,d,m,n-a,p);b.fillRect(d+n-a,m,a,p);b.fillStyle=l;b.globalAlpha=.9;b.fillRect(d+n-a,m,a,g((1-h/w)*p))}}};return f});
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /**
  * @author qiao / https://github.com/qiao
  * @author mrdoob / http://mrdoob.com
@@ -10251,7 +10417,7 @@ Object.defineProperties( THREE.OrbitControls.prototype, {
 
 } );
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 // threejs.org/license
 (function(k,xa){"object"===typeof exports&&"undefined"!==typeof module?xa(exports):"function"===typeof define&&define.amd?define(["exports"],xa):xa(k.THREE={})})(this,function(k){function xa(){}function C(a,b){this.x=a||0;this.y=b||0}function Q(){this.elements=[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1];0<arguments.length&&console.error("THREE.Matrix4: the constructor no longer reads arguments. use .set() instead.")}function ca(a,b,c,d){this._x=a||0;this._y=b||0;this._z=c||0;this._w=void 0!==d?d:1}function p(a,
 b,c){this.x=a||0;this.y=b||0;this.z=c||0}function ta(){this.elements=[1,0,0,0,1,0,0,0,1];0<arguments.length&&console.error("THREE.Matrix3: the constructor no longer reads arguments. use .set() instead.")}function aa(a,b,c,d,e,f,g,h,l,m){Object.defineProperty(this,"id",{value:xf++});this.uuid=S.generateUUID();this.name="";this.image=void 0!==a?a:aa.DEFAULT_IMAGE;this.mipmaps=[];this.mapping=void 0!==b?b:aa.DEFAULT_MAPPING;this.wrapS=void 0!==c?c:1001;this.wrapT=void 0!==d?d:1001;this.magFilter=void 0!==
@@ -11164,7 +11330,7 @@ a.project(b)};this.unprojectVector=function(a,b){console.warn("THREE.Projector: 
 this.setClearColor=function(){};this.setSize=function(){}};k.SceneUtils={createMultiMaterialObject:function(){console.error("THREE.SceneUtils has been moved to /examples/js/utils/SceneUtils.js")},detach:function(){console.error("THREE.SceneUtils has been moved to /examples/js/utils/SceneUtils.js")},attach:function(){console.error("THREE.SceneUtils has been moved to /examples/js/utils/SceneUtils.js")}};k.LensFlare=function(){console.error("THREE.LensFlare has been moved to /examples/js/objects/LensFlare.js")};
 Object.defineProperty(k,"__esModule",{value:!0})});
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 (function (global){
 ; var __browserify_shim_require__=require;(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {
 /* Zepto v1.2.0 - zepto event ajax form ie - zeptojs.com/license */
@@ -11174,7 +11340,7 @@ Object.defineProperty(k,"__esModule",{value:!0})});
 }).call(global, undefined, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 module.exports = function(strings) {
   if (typeof strings === 'string') strings = [strings]
   var exprs = [].slice.call(arguments,1)

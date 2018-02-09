@@ -6,6 +6,7 @@ require( 'greensock/TweenMax' );
 var CustomEvent		= require( 'CustomEvent' );
 var Config			= require( 'Config' );
 var FPSStats		= require( 'utils/FPSStats' );
+var Math_			= require( 'utils/Math' );
 
 
 function MainView() {
@@ -78,7 +79,7 @@ MainView.prototype.initEl = function() {
 MainView.prototype.bindEvents = function() {
 	this.$window.on( 'resize', $.proxy( this.resize, this ) );
 	TweenLite.ticker.addEventListener( 'tick', this.raf, this );
-	// this.$window.on( 'mousemove', $.proxy( this.mouseMove, this ) );
+	this.$window.on( 'mousemove', $.proxy( this.mouseMove, this ) );
 	// this.$window.on( 'mousedown', $.proxy( this.mouseDown, this ) );
 	// this.$window.on( 'mouseup', $.proxy( this.mouseUp, this ) );
 	// this.$window.on( 'touchmove', $.proxy( this.touchMove, this ) );
@@ -127,11 +128,86 @@ MainView.prototype.raf = function() {
 
 
 var _setRafProps = function() {
-	// this.sY		= this.$window[0].scrollY || this.$window[0].pageYOffset;
-	// this.siY	= STF_math_getInertia( this.sY, this.siY, this.SCROLL_INERTIA, true );
+	this.sY		= this.$window[0].scrollY || this.$window[0].pageYOffset;
+	this.siY	= Math_.getInertia( this.sY, this.siY, this.SCROLL_INERTIA, true );
 	
-	// this.miX	= STF_math_getInertia( this.mX, this.miX, this.MOUSE_INERTIA, true );
-	// this.miY	= STF_math_getInertia( this.mY, this.miY, this.MOUSE_INERTIA, true );
+	this.miX	= Math_.getInertia( this.mX, this.miX, this.MOUSE_INERTIA, true );
+	this.miY	= Math_.getInertia( this.mY, this.miY, this.MOUSE_INERTIA, true );
+};
+
+
+MainView.prototype.mouseMove = function( e ) {
+	this.mX = e.clientX;
+	this.mY = e.clientY;
+	
+	// console.log( 'MainView _mouseMove()', this.mX, this.mY );
+	
+	this.dispatch( this.E.MOUSE_MOVE );
+};
+
+
+MainView.prototype.mouseDown = function() {
+	this.dispatch( this.E.MOUSE_DOWN );
+};
+
+
+MainView.prototype.mouseUp = function() {
+	this.dispatch( this.E.MOUSE_UP );
+};
+
+
+MainView.prototype.touchMove = function( e ) {
+	e.preventDefault();
+	
+	// Zepto
+	this.tX = e.touches[0].pageX;
+	this.tY = e.touches[0].pageY;
+	// jQuery
+	// this.tX = e.originalEvent.touches[0].pageX;
+	// this.tY = e.originalEvent.touches[0].pageY;
+	
+	this.dispatch( this.E.TOUCH_MOVE );
+};
+
+
+MainView.prototype.touchStart = function() {
+	this.dispatch( this.E.TOUCH_START );
+};
+
+
+MainView.prototype.touchEnd = function() {
+	this.dispatch( this.E.TOUCH_END );
+};
+
+
+MainView.prototype.windowOut = function() {
+	this.isWindowFocused = false;
+	
+	this.dispatch( this.E.WINDOW_OUT );
+};
+
+
+MainView.prototype.windowIn = function() {
+	this.isWindowFocused = true;
+	
+	this.dispatch( this.E.WINDOW_IN );
+};
+
+
+MainView.prototype.setScrollY = function( scrollY ) {
+	this.sY		= scrollY;
+	this.siY	= scrollY;
+	
+	this.$window[0].scrollTo( 0, scrollY );
+};
+
+
+MainView.prototype.setBodyHeight = function( bodyH ) {
+	if ( bodyH === null )
+		bodyH = this.$pageCont.height();
+	
+	this.bH						= bodyH;
+	this.$body[0].style.height	= this.bH + 'px';
 };
 
 
