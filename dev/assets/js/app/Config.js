@@ -7,6 +7,7 @@ function Config() {
 	this.IS_PROD		= null;
 	
 	this.HAS_FPS_STATS	= true;
+	this.WEBGL_DEBUG	= true;
 	
 	
 	this.init();

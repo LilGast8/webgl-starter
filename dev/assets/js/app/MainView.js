@@ -3,9 +3,9 @@
 
 require( 'greensock/TweenMax' );
 
-var Config		= require( 'Config' );
-var FPSStats	= require( 'utils/FPSStats' );
-var CustomEvent	= require( 'CustomEvent' );
+var CustomEvent		= require( 'CustomEvent' );
+var Config			= require( 'Config' );
+var FPSStats		= require( 'utils/FPSStats' );
 
 
 function MainView() {
