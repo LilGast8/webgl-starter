@@ -68,9 +68,8 @@ var _initObject = function() {
 	var geometry	= new THREE.SphereBufferGeometry( 20, 32, 32 );
 	var material = new THREE.ShaderMaterial( {
 		uniforms:		this.sphereUniforms,
-		vertexShader:	glslify( '../../shaders/sphere.vert' ),
-		fragmentShader:	glslify( '../../shaders/sphere.frag' ),
-		color:			0xff0088,
+		vertexShader:	glslify( '../../3d/shaders/sphere.vert' ),
+		fragmentShader:	glslify( '../../3d/shaders/sphere.frag' ),
 		wireframe:		true,
 		// lights:			true,
 		// transparent:	true,

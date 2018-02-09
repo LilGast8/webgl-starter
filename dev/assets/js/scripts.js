@@ -530,7 +530,6 @@ var _initObject = function() {
 		uniforms:		this.sphereUniforms,
 		vertexShader:	glslify(["#define GLSLIFY 1\n\nvoid main() {\n\t\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n\t\n}\n\n"]),
 		fragmentShader:	glslify(["#define GLSLIFY 1\n\nvoid main() {\n\t\n\tgl_FragColor = vec4( 1.0, 0.0, 0.5, 1.0 );\n\t\n}\n"]),
-		color:			0xff0088,
 		wireframe:		true,
 		// lights:			true,
 		// transparent:	true,
