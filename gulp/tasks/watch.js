@@ -21,13 +21,11 @@ gulp.task( 'watch', function() {
 		// /* htaccess */
 		// paths.env.base + paths.htaccess,
 		
-		/* 3d shaders */
-		paths.env.dev + paths.assets._3d.shaders.allFiles,
-		
 		/* Assets */
-		// paths.env.dev + paths.assets.allFiles,
-		// '!' + paths.env.dev + paths.assets.css.minAllFiles,
-		// '!' + paths.env.dev + paths.assets.css.fonts.allFiles,
+		paths.env.dev + paths.assets.allFiles,
+		'!' + paths.env.dev + paths.assets.css.minAllFiles,
+		'!' + paths.env.dev + paths.assets.css.fonts.allFiles,
+		'!' + paths.env.dev + paths.assets.css.maps.allFiles,
 		// '!' + paths.env.dev + paths.assets.js.minAllFiles,
 		// '!' + paths.env.dev + paths.assets.favicons.allFiles,
 		// '!' + paths.env.dev + paths.assets.svg.sprite.allFiles,
@@ -44,6 +42,7 @@ gulp.task( 'watch', function() {
 		
 		filePath	= e.path;
 		ext			= path.extname( filePath );
+		console.log( ext );
 		
 		
 		// if ( ext == '.js' )
@@ -83,19 +82,8 @@ gulp.task( 'watch', function() {
 		// }
 		
 		// /* SASS */
-		// else if ( ext == '.scss' ) {
-		// 	taskname = 'sass';
-			
-		// 	if ( desktop )
-		// 		options.cssSrcPath = [ paths.env.dev + paths.assets.css.app.desktopFile ];
-		// 	else if ( mobile )
-		// 		options.cssSrcPath = [ paths.env.dev + paths.assets.css.app.mobileFile ];
-		// 	else if ( shared )
-		// 		options.cssSrcPath = [
-		// 			paths.env.dev + paths.assets.css.app.desktopFile,
-		// 			paths.env.dev + paths.assets.css.app.mobileFile
-		// 		];
-		// }
+		if ( ext == '.scss' )
+			taskname = 'sass';
 		
 		// /* Favicons */
 		// if ( favicons ) {
@@ -133,14 +121,20 @@ gulp.task( 'watch', function() {
 		// }
 		
 		
-		// if ( taskname )
-		// 	gulp.start( taskname );
+		if ( taskname )
+			gulp.start( taskname );
 		
 	} );
 	
 	
 	/* Livereload */
 	gulp.watch( [
+		
+		/* 3d shaders */
+		paths.env.dev + paths.assets._3d.shaders.allFiles,
+		
+		/* CSS */
+		paths.env.dev + paths.assets.css.allMinFiles,
 		
 		/* JS */
 		paths.env.dev + paths.assets.js.minAllFiles,

@@ -28,9 +28,18 @@ module.exports = {
 			dir:			'assets/css/',
 			minAllFiles:	'assets/css/*.css',
 			
+			app: {
+				allSCSS:	'assets/css/app/*.scss'
+			},
+			
 			fonts: {
 				dir:		'assets/css/fonts/',
 				allFiles:	'assets/css/fonts/**/*',
+			},
+			
+			maps: {
+				dir:		'assets/css/maps/',
+				allFiles:	'assets/css/maps/**/*',
 			}
 		},
 		

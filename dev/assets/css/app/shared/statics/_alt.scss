@@ -1,0 +1,155 @@
+
+
+
+/***************************/
+/* -------- NO JS -------- */
+/***************************/
+
+
+#no-js {
+	position: fixed;
+	left: 0;
+	top: 20px;
+	width: 100%;
+	padding: 10px 0;
+	font: normal 12px/14px $PL;
+	text-align: center;
+	background-color: $alt1;
+	z-index: 113;
+	
+	.alt-title {
+		margin-bottom: 10px;
+		font: normal 30px/30px $PBK;
+		color: $alt3;
+	}
+	
+	p { color: $alt2; }
+	
+	a {
+		color: $alt3;
+		text-decoration: underline;
+		
+		&:hover { color: $alt4; }
+	}
+}
+
+
+
+
+
+/*********************************/
+/* -------- OLD BROWSER -------- */
+/*********************************/
+
+
+#old-browser {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	font: normal 12px/14px $PL;
+	text-align: center;
+	background: url(../img/bgs/pattern-transparent-black.png) left top repeat;
+	z-index: 113;
+	
+	.container {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		width: 960px;
+		height: 250px;
+		padding: 95px 0;
+		margin: -220px 0 0 -480px;
+		background-color: $alt1;
+	}
+	
+	.alt-title {
+		margin-bottom: 10px;
+		font: normal 30px/30px $PBK;
+		color: $alt3;
+	}
+	
+	p { color: $alt2; }
+}
+
+.browsers {
+	position: relative;
+	width: 960px;
+	height: 145px;
+	margin-top: 30px;
+	
+	a {
+		display: block;
+		position: absolute;
+		top: 0;
+		width: 80px;
+		text-align: center;
+		color: #3a6774;
+		text-decoration: none;
+		
+		&.chrome { left: 94px; }
+		&.firefox { left: 268px; }
+		&.safari { left: 440px; }
+		&.opera { left: 608px; }
+		&.ie { left: 776px; }
+		
+		.alt-logo { display: block; }
+		
+		.alt-subtitle {
+			color: $alt3;
+			margin-top: 10px;
+		}
+		
+		p {
+			display: none;
+			font: normal 12px/14px $PBD;
+			color: $alt4;
+		}
+		
+		&:hover p {
+			display: block;
+			margin-top: 3px;
+		}
+	}
+}
+
+
+
+/******************************/
+/* -------- NO WEBGL -------- */
+/******************************/
+
+
+#no-webgl {
+	display: none;
+	position: fixed;
+	left: 0;
+	top: 20px;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 10px 20px;
+	font: normal 12px/14px $PL;
+	text-align: center;
+	background-color: $alt1;
+	z-index: 113;
+	
+	.alt-title {
+		margin-bottom: 10px;
+		font: normal 30px/30px $PBK;
+		color: $alt3;
+	}
+	
+	p { color: $alt2; }
+	
+	a {
+		color: $alt3;
+		text-decoration: underline;
+		
+		&:hover { color: $alt4; }
+	}
+}
+
+.no-webgl #no-webgl { display: block; }
+
+
