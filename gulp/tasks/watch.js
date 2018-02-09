@@ -21,6 +21,9 @@ gulp.task( 'watch', function() {
 		// /* htaccess */
 		// paths.env.base + paths.htaccess,
 		
+		/* 3d shaders */
+		paths.env.dev + paths.assets._3d.shaders.allFiles,
+		
 		/* Assets */
 		// paths.env.dev + paths.assets.allFiles,
 		// '!' + paths.env.dev + paths.assets.css.minAllFiles,
