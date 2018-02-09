@@ -2,7 +2,7 @@
 
 
 // var DatGUI		= require( 'DatGUI' );
-// var glslify		= require( 'glslify' );
+var glslify			= require( 'glslify' );
 
 var AbstractView	= require( 'abstracts/AbstractView' );
 var MainView		= require( 'MainView' );
@@ -66,7 +66,10 @@ var _initUniforms = function() {
 
 var _initObject = function() {
 	var geometry	= new THREE.SphereBufferGeometry( 20, 32, 32 );
-	var material	= new THREE.MeshBasicMaterial( {
+	var material = new THREE.ShaderMaterial( {
+		uniforms:		this.sphereUniforms,
+		vertexShader:	glslify( '../../shaders/sphere.vert' ),
+		fragmentShader:	glslify( '../../shaders/sphere.frag' ),
 		color:			0xff0088,
 		wireframe:		true,
 		// lights:			true,

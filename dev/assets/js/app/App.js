@@ -1,9 +1,6 @@
 'use strict';
 
 
-// var DatGUI		= require( 'DatGUI' );
-// var glslify		= require( 'glslify' );
-
 var MainView	= require( 'MainView' );
 var WebGLScene	= require( 'WebGLScene' );
 var Lights		= require( 'Lights' );

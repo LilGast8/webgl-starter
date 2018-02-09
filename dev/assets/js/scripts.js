@@ -2,9 +2,6 @@
 'use strict';
 
 
-// var DatGUI		= require( 'DatGUI' );
-// var glslify		= require( 'glslify' );
-
 var MainView	= require( 'MainView' );
 var WebGLScene	= require( 'WebGLScene' );
 var Lights		= require( 'Lights' );
@@ -389,7 +386,7 @@ module.exports = new MainView();
 
 
 // var DatGUI		= require( 'DatGUI' );
-// var glslify		= require( 'glslify' );
+var glslify			= require( 'glslify' );
 
 var AbstractView	= require( 'abstracts/AbstractView' );
 var MainView		= require( 'MainView' );
@@ -453,7 +450,10 @@ var _initUniforms = function() {
 
 var _initObject = function() {
 	var geometry	= new THREE.SphereBufferGeometry( 20, 32, 32 );
-	var material	= new THREE.MeshBasicMaterial( {
+	var material = new THREE.ShaderMaterial( {
+		uniforms:		this.sphereUniforms,
+		vertexShader:	glslify(["#define GLSLIFY 1\n\nvoid main() {\n\t\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n\t\n}\n\n"]),
+		fragmentShader:	glslify(["#define GLSLIFY 1\n\nvoid main() {\n\t\n\tgl_FragColor = vec4( 1.0, 0.0, 0.5, 1.0 );\n\t\n}\n"]),
 		color:			0xff0088,
 		wireframe:		true,
 		// lights:			true,
@@ -470,7 +470,7 @@ var _initObject = function() {
 module.exports = Sphere;
 
 
-},{"MainView":6,"abstracts/AbstractView":9}],8:[function(require,module,exports){
+},{"MainView":6,"abstracts/AbstractView":9,"glslify":17}],8:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -11174,4 +11174,16 @@ Object.defineProperty(k,"__esModule",{value:!0})});
 }).call(global, undefined, undefined, undefined, undefined, function defineExport(ex) { module.exports = ex; });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],17:[function(require,module,exports){
+module.exports = function(strings) {
+  if (typeof strings === 'string') strings = [strings]
+  var exprs = [].slice.call(arguments,1)
+  var parts = []
+  for (var i = 0; i < strings.length-1; i++) {
+    parts.push(strings[i], exprs[i] || '')
+  }
+  parts.push(strings[i])
+  return parts.join('')
+}
+
 },{}]},{},[5]);
