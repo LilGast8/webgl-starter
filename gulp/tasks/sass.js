@@ -1,7 +1,6 @@
 var gulp			= require( 'gulp' );
 var path			= require( 'path' );
 
-// var options			= require( '../utils/options' );
 var cssSupports		= require( '../utils/css-supports' );
 var paths			= require( '../utils/paths' );
 
@@ -17,13 +16,12 @@ var rename			= require( 'gulp-rename' );
 
 gulp.task( 'sass', [ 'sass:dev' ], function() {
 	
-	// if ( options.task == 'sass' )
-	// 	gulp.start( 'move' );
+	
 	
 });
 
 
-gulp.task( 'sass:dev', /*[ 'delete' ],*/ function() {
+gulp.task( 'sass:dev', function() {
 	
 	return gulp.src( paths.env.dev + paths.assets.css.app.allSCSS )
 		.pipe( plumber() )
