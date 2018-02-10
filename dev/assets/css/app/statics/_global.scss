@@ -2,7 +2,7 @@
 
 
 /****************************/
-/* -------- GLOBAL -------- */
+/* -------- Global -------- */
 /****************************/
 
 
@@ -16,7 +16,7 @@
 }
 
 body {
-	font: normal 12px/16px $PL;
+	font: normal 13px/15px Arial;
 	// -webkit-font-smoothing: subpixel-antialiased;
 	// -moz-osx-font-smoothing: auto;
 	-webkit-font-smoothing: antialiased;
@@ -28,7 +28,7 @@ body {
 
 
 
-/* -------- CSS TRANSITION -------- */
+/* -------- CSS transition -------- */
 
 .js .preload * { transition: none !important; }
 

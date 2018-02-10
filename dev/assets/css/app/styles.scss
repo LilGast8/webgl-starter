@@ -2,51 +2,49 @@
 
 
 
-/****************************************/
-/* -------- SHARED - UTILITIES -------- */
-/****************************************/
+/*******************************/
+/* -------- Utilities -------- */
+/*******************************/
 
 
-@import 'shared/utilities/_reset';
-@import 'shared/utilities/_fonts';
-@import 'shared/utilities/_variables';
-@import 'shared/utilities/_easing';
-@import 'shared/utilities/_functions';
-
-
-
-
-
-/**************************************/
-/* -------- SHARED - STATICS -------- */
-/**************************************/
-
-
-@import 'shared/statics/_svg';
-@import 'shared/statics/_alt';
-@import 'shared/statics/_global';
-
-
-
-
-
-/***************************************/
-/* -------- SHARED - PARTIALS -------- */
-/***************************************/
-
-
-// @import 'shared/partials/_PARTIAL';
+@import 'utilities/_reset';
+@import 'utilities/_fonts';
+@import 'utilities/_variables';
+@import 'utilities/_easing';
+@import 'utilities/_functions';
 
 
 
 
 
 /*****************************/
-/* -------- STATICS -------- */
+/* -------- Statics -------- */
 /*****************************/
 
 
-@import 'shared/_webgl-scene';
+@import 'statics/_svg';
+@import 'statics/_global';
+@import 'statics/_webgl-scene';
 
+
+
+
+/******************************/
+/* -------- Partials -------- */
+/******************************/
+
+
+// @import 'partials/_PARTIAL';
+
+
+
+
+
+/***************************/
+/* -------- Views -------- */
+/***************************/
+
+
+// @import 'views/_PARTIAL';
 
 
