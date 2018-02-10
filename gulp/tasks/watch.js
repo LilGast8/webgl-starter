@@ -42,7 +42,6 @@ gulp.task( 'watch', function() {
 		
 		filePath	= e.path;
 		ext			= path.extname( filePath );
-		console.log( ext );
 		
 		
 		// if ( ext == '.js' )
