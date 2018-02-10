@@ -26,7 +26,7 @@ module.exports = {
 		
 		css: {
 			dir:			'assets/css/',
-			minAllFiles:	'assets/css/*.css',
+			allMinFiles:	'assets/css/*.css',
 			
 			app: {
 				allSCSS:	'assets/css/app/*.scss'
@@ -53,7 +53,7 @@ module.exports = {
 		js: {
 			dir:			'assets/js/',
 			allFiles:		'assets/js/**/*.js',
-			minAllFiles:	'assets/js/scripts.js',
+			allMinFiles:	'assets/js/scripts.js',
 			
 			app: {
 				dir:			'assets/js/app/',

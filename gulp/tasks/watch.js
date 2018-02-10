@@ -136,7 +136,7 @@ gulp.task( 'watch', function() {
 		paths.env.dev + paths.assets.css.allMinFiles,
 		
 		/* JS */
-		paths.env.dev + paths.assets.js.minAllFiles,
+		paths.env.dev + paths.assets.js.allMinFiles,
 		
 		/* Server */
 		paths.env.dev + paths.indexFile,
