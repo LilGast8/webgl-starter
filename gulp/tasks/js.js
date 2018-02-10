@@ -13,6 +13,7 @@ var sourcemaps	= require( 'gulp-sourcemaps' );
 
 var assign		= require( 'lodash.assign' );
 
+var notify		= require( 'gulp-notify' );
 var gutil		= require( 'gulp-util' );
 
 var glslify		= require( 'glslify' );
@@ -58,7 +59,12 @@ gulp.task( 'js', function() {
 function bundle( b ) {
 	return b.bundle()
 		// log errors if they happen
-		.on( 'error', gutil.log.bind( gutil, 'Browserify Error' ) )
+		.on( 'error', function( error ) {
+			var file	= error.filename.substr( error.filename.indexOf( '/assets/' ) + 8 );
+			var msg		= 'JS error: ' + file + ' on line ' + error.loc.line + ', column ' + error.loc.column;
+			notify().write( msg );
+			console.log( gutil.colors.red( error.message ) );
+		} )
 		.pipe( source( 'scripts.js' ) )
 		// optional, remove if you don't need to buffer file contents
 		.pipe( buffer() )
