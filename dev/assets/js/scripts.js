@@ -572,6 +572,8 @@ WebGLScene.prototype.constructor	= WebGLScene;
 
 
 WebGLScene.prototype.init = function() {
+	AbstractView.prototype.init.call( this );
+	
 	console.log( '🎥 WebGLScene.init()' );
 	
 	this.initEl();
@@ -582,11 +584,15 @@ WebGLScene.prototype.init = function() {
 
 
 WebGLScene.prototype.initEl = function() {
+	AbstractView.prototype.initEl.call( this );
+	
 	_initScene.call( this );
 };
 
 
 WebGLScene.prototype.bindEvents = function() {
+	AbstractView.prototype.bindEvents.call( this );
+	
 	MainView.bind( MainView.E.RAF, this.raf, this );
 };
 
