@@ -8,9 +8,7 @@ module.exports = {
 	
 	emptyFiles:	'**/empty-folder.txt',
 	
-	// htaccess:	'.htaccess',
 	indexFile:	'index.*',
-	// robots:		'robots.txt',
 	
 	assets: {
 		allFiles: 'assets/**/*',
@@ -29,7 +27,8 @@ module.exports = {
 			allMinFiles:	'assets/css/*.css',
 			
 			app: {
-				allSCSS:	'assets/css/app/*.scss'
+				allSCSS:	'assets/css/app/*.scss',
+				allFiles:	'assets/css/app/**/*.scss',
 			},
 			
 			fonts: {
@@ -53,100 +52,23 @@ module.exports = {
 		js: {
 			dir:			'assets/js/',
 			allFiles:		'assets/js/**/*.js',
-			allMinFiles:	'assets/js/scripts.js',
+			scriptsFile:	'assets/js/scripts.js',
+			scriptsMinFile:	'assets/js/scripts.min.js',
 			
 			app: {
 				dir:			'assets/js/app/',
 				allFiles:		'assets/js/app/**/*.js',
 			},
 			
+			maps: {
+				dir:		'assets/js/maps/',
+				allFiles:	'assets/js/maps/**/*',
+			},
+			
 			vendor: {
 				dir: 'assets/js/vendor/'
 			}
-		},
-		
-		// json: {
-		// 	dir:		'assets/json/',
-		// 	allFiles:	'assets/json/**/*.json'
-		// },
-		
-		// sounds: {
-		// 	dir:		'assets/sounds/',
-		// 	allFiles:	'assets/sounds/**/*'
-		// },
-		
-		// svg: {
-		// 	dir:		'assets/svg/',
-		// 	allFiles:	'assets/svg/*.svg',
-			
-		// 	sprite: {
-		// 		dir:		'assets/svg/_sprite/',
-		// 		allFiles:	'assets/svg/_sprite/*.svg'
-		// 	}
-		// },
-		
-		// videos: {
-		// 	dir:		'assets/videos/',
-		// 	allFiles:	'assets/videos/**/*'
-		// }
-	},
-	
-	// configs: {
-	// 	dir:				'configs/',
-	// 	allFiles:			'configs/**/*',
-	// 	allRootJsonFiles:	'configs/*.json',
-	// 	allJsonFiles:		'configs/**/*.json',
-	// 	configFile:			'configs/config.json',
-	// 	jsFilesFile:		'configs/js-files.json',
-	// 	routesFile:			'configs/routes.json',
-		
-	// 	favicons: {
-	// 		dir:		'configs/favicons/',
-	// 		allFiles:	'configs/favicons/*.json',
-	// 		configFile:	'configs/favicons/config.json',
-	// 		dataFile:	'configs/favicons/faviconData.json',
-	// 		srcFile:	'configs/favicons/favicons.twig'
-	// 	},
-		
-	// 	routes: {
-	// 		dir:		'configs/routes/',
-	// 		allFiles:	'configs/routes/*.json'
-	// 	}
-	// },
-	
-	// server: {
-	// 	dir:		'server/',
-	// 	allFiles:	'server/**/*',
-		
-	// 	contents: 'server/contents/',
-		
-	// 	core: {
-	// 		controllers: {
-	// 			pages:		'server/core/controllers/pages/',
-	// 			partials:	'server/core/controllers/partials/',
-	// 			statics:	'server/core/controllers/statics/'
-	// 		}
-	// 	},
-		
-	// 	vendor: {
-	// 		allFiles: 'server/vendor/**/*',
-	// 	},
-		
-	// 	views: {
-	// 		desktop: {
-	// 			pages:		'server/views/desktop/pages/',
-	// 			partials:	'server/views/desktop/partials/',
-	// 			statics:	'server/views/desktop/statics/'
-	// 		},
-	// 		mobile: {
-	// 			pages:		'server/views/mobile/pages/',
-	// 			partials:	'server/views/mobile/partials/',
-	// 			statics:	'server/views/mobile/statics/'
-	// 		},
-	// 		shared: {
-	// 			dir: 'server/views/shared/'
-	// 		}
-	// 	}
-	// }
+		}
+	}
 	
 };
