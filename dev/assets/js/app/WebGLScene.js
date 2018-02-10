@@ -23,12 +23,10 @@ WebGLScene.prototype.constructor	= WebGLScene;
 
 
 WebGLScene.prototype.init = function() {
-	AbstractView.prototype.init.call( this );
-	
 	console.log( '🎥 WebGLScene.init()' );
 	
-	this.initEl();
-	this.bindEvents();
+	AbstractView.prototype.init.call( this );
+	
 	if ( Config.WEBGL_DEBUG )
 		_initHelpers.call( this );
 };

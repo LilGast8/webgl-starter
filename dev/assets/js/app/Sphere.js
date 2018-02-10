@@ -23,9 +23,9 @@ Sphere.prototype.constructor	= Sphere;
 
 
 Sphere.prototype.init = function() {
-	AbstractView.prototype.init.call( this );
-	
 	console.log( '🌍 Sphere.init()' );
+	
+	AbstractView.prototype.init.call( this );
 };
 
 

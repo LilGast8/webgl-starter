@@ -17,10 +17,9 @@ Lights.prototype.constructor	= Lights;
 
 
 Lights.prototype.init = function() {
-	AbstractView.prototype.init.call( this );
-	
 	console.log( '💡 Lights.init()' );
 	
+	AbstractView.prototype.init.call( this );
 };
 
 
