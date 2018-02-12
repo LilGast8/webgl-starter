@@ -580,6 +580,11 @@ WebGLScene.prototype.init = function() {
 };
 
 
+WebGLScene.prototype.initDOM = function() {
+	this.$webGLCont = $( document.getElementById( 'webgl-container' ) );
+};
+
+
 WebGLScene.prototype.initEl = function() {
 	AbstractView.prototype.initEl.call( this );
 	
@@ -606,7 +611,7 @@ var _initScene = function() {
 		antialias: true
 	} );
 	this.renderer.setSize( MainView.bW, MainView.wH );
-	MainView.$mainCont[0].appendChild( this.renderer.domElement );
+	this.$webGLCont[0].appendChild( this.renderer.domElement );
 };
 
 
