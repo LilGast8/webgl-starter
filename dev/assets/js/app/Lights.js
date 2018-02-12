@@ -24,8 +24,6 @@ Lights.prototype.init = function() {
 
 
 Lights.prototype.initEl = function() {
-	AbstractView.prototype.initEl.call( this );
-	
 	_initLights.call( this );
 };
 

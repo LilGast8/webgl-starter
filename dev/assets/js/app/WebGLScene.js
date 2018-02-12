@@ -38,8 +38,6 @@ WebGLScene.prototype.initDOM = function() {
 
 
 WebGLScene.prototype.initEl = function() {
-	AbstractView.prototype.initEl.call( this );
-	
 	_initScene.call( this );
 };
 

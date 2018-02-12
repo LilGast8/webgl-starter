@@ -30,8 +30,6 @@ Sphere.prototype.init = function() {
 
 
 Sphere.prototype.initEl = function() {
-	AbstractView.prototype.initEl.call( this );
-	
 	_initUniforms.call(	this );
 	_initObject.call(	this );
 };

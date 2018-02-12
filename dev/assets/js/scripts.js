@@ -190,8 +190,6 @@ Lights.prototype.init = function() {
 
 
 Lights.prototype.initEl = function() {
-	AbstractView.prototype.initEl.call( this );
-	
 	_initLights.call( this );
 };
 
@@ -489,8 +487,6 @@ Sphere.prototype.init = function() {
 
 
 Sphere.prototype.initEl = function() {
-	AbstractView.prototype.initEl.call( this );
-	
 	_initUniforms.call(	this );
 	_initObject.call(	this );
 };
@@ -586,8 +582,6 @@ WebGLScene.prototype.initDOM = function() {
 
 
 WebGLScene.prototype.initEl = function() {
-	AbstractView.prototype.initEl.call( this );
-	
 	_initScene.call( this );
 };
 
