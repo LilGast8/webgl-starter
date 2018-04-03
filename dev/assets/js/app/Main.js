@@ -1,4 +1,3 @@
-'use strict';
 
 
 require( 'zepto' );
@@ -8,20 +7,27 @@ var MainView	= require( 'MainView' );
 var App			= require( 'App' );
 
 
-
-function Main() {}
-
-
-Main.prototype.init = function() {
-	MainView.init();
+class Main {
 	
-	var app = new App();
-	app.init();
+	
+	constructor() {
+		
+	}
+	
+	
+	init() {
+		MainView.init();
+		
+		var app = new App();
+		app.init();
+	}
+	
+	
 };
 
 
 var main = new Main();
 
 
-$( main.init.bind( main ) );
+$( main.init() );
 

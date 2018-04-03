@@ -1,42 +1,43 @@
-'use strict';
 
 
 var AbstractView	= require( 'abstracts/AbstractView' );
 var MainView		= require( 'MainView' );
 
 
-function Lights( webGLScene ) {
-	AbstractView.call( this );
+class Lights extends AbstractView {
 	
-	this.webGLScene = webGLScene;
+	
+	constructor( webGLScene ) {
+		super();
+		
+		this.webGLScene = webGLScene;
+	}
+	
+	
+	init() {
+		console.log( '💡 Lights.init()' );
+		
+		super.init();
+	};
+	
+	
+	initEl() {
+		this._initLights();
+	};
+	
+	
+	bindEvents() {
+		super.bindEvents();
+	};
+	
+	
+	_initLights() {
+		this.directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+		this.webGLScene.add( this.directionalLight );
+	};
+	
+	
 }
-
-
-Lights.prototype				= Object.create( AbstractView.prototype );
-Lights.prototype.constructor	= Lights;
-
-
-Lights.prototype.init = function() {
-	console.log( '💡 Lights.init()' );
-	
-	AbstractView.prototype.init.call( this );
-};
-
-
-Lights.prototype.initEl = function() {
-	_initLights.call( this );
-};
-
-
-Lights.prototype.bindEvents = function() {
-	AbstractView.prototype.bindEvents.call( this );
-};
-
-
-var _initLights = function() {
-	this.directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
-	this.webGLScene.add( this.directionalLight );
-};
 
 
 module.exports = Lights;

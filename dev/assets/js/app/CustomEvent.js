@@ -1,4 +1,3 @@
-'use strict';
 
 
 var signals	= require( 'signals' );
@@ -6,80 +5,86 @@ var signals	= require( 'signals' );
 var Config	= require( 'Config' );
 
 
-function CustomEvent() {
-	this.e						= {};
-	this.E						= {};
+class CustomEvent {
 	
-	this.isWarningDispatched	= false;
-}
-
-
-CustomEvent.prototype.bind = function( name, fct, context ) {
-	if ( !name || !fct ) {
-		if ( !Config.IS_PROD ) {
-			var missingParams;
+	
+	constructor() {
+		this.e						= {};
+		this.E						= {};
+		
+		this.isWarningDispatched	= false;
+	}
+	
+	
+	bind( name, fct, context ) {
+		if ( !name || !fct ) {
+			if ( !Config.IS_PROD ) {
+				let missingParams;
+				
+				if ( !name && !fct )
+					missingParams = 'name and a function';
+				else if ( !name )
+					missingParams = 'name';
+				else if ( !fct )
+					missingParams = 'function';
+				
+				console.warn( 'You must to provide a ' + missingParams + ' to the custom event you want to bind.' );
+			}
 			
-			if ( !name && !fct )
-				missingParams = 'name and a function';
-			else if ( !name )
-				missingParams = 'name';
-			else if ( !fct )
-				missingParams = 'function';
-			
-			console.warn( 'You must to provide a ' + missingParams + ' to the custom event you want to bind.' );
+			return;
 		}
 		
-		return;
-	}
-	
-	if ( !context && !Config.IS_PROD )
-		console.warn( 'Bind "' + name + '" custom event without context.' );
-	
-	if ( this.e[ name ] === undefined ) // if the custom event doesn't exist, create it
-		this.e[ name ] = new signals.Signal();
-	
-	this.e[ name ].add( fct, context ); // add the listener to the custom event
-};
-
-
-CustomEvent.prototype.unbind = function( name, fct, context ) {
-	if ( !name ) {
-		if ( !Config.IS_PROD )
-			console.warn( 'You must to define the name of the custom event you want to unbind.' );
+		if ( !context && !Config.IS_PROD )
+			console.warn( 'Bind "' + name + '" custom event without context.' );
 		
-		return;
+		if ( this.e[ name ] === undefined ) // if the custom event doesn't exist, create it
+			this.e[ name ] = new signals.Signal();
+		
+		this.e[ name ].add( fct, context ); // add the listener to the custom event
 	}
 	
 	
-	if ( fct !== undefined && fct !== null ) // remove a single listener from the custom event
-		this.e[ name ].remove( fct, context );
-	
-	else // remove all listeners from the custom event
-		this.e[ name ].removeAll();
-	
-	
-	if ( this.e[ name ].getNumListeners() === 0 ) { // dispose & delete the event if listeners no longer exist
-		this.e[ name ].dispose();
-		delete this.e[ name ];
-	}
-};
-
-
-CustomEvent.prototype.dispatch = function( name, params ) {
-	if ( this.e[ name ] === undefined ) { // if the event is not registred
-		if ( !Config.IS_PROD && !this.isWarningDispatched ) {
-			console.warn( 'Trying to dispath "' + name + '" custom event which is undefined.' );
+	unbind( name, fct, context ) {
+		if ( !name ) {
+			if ( !Config.IS_PROD )
+				console.warn( 'You must to define the name of the custom event you want to unbind.' );
 			
-			this.isWarningDispatched = true;
+			return;
 		}
 		
-		return;
+		
+		if ( fct !== undefined && fct !== null ) // remove a single listener from the custom event
+			this.e[ name ].remove( fct, context );
+		
+		else // remove all listeners from the custom event
+			this.e[ name ].removeAll();
+		
+		
+		if ( this.e[ name ].getNumListeners() === 0 ) { // dispose & delete the event if listeners no longer exist
+			this.e[ name ].dispose();
+			delete this.e[ name ];
+		}
 	}
 	
-	if ( params === undefined )
-		this.e[ name ].dispatch();
-	else
-		this.e[ name ].dispatch( params );
+	
+	dispatch( name, params ) {
+		if ( this.e[ name ] === undefined ) { // if the event is not registred
+			if ( !Config.IS_PROD && !this.isWarningDispatched ) {
+				console.warn( 'Trying to dispath "' + name + '" custom event which is undefined.' );
+				
+				this.isWarningDispatched = true;
+			}
+			
+			return;
+		}
+		
+		if ( params === undefined )
+			this.e[ name ].dispatch();
+		else
+			this.e[ name ].dispatch( params );
+	}
+	
+	
 };
 
 

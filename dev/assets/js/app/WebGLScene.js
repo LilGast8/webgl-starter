@@ -1,4 +1,3 @@
-'use strict';
 
 
 global.THREE	= require( 'three.js/three.min' );
@@ -9,128 +8,130 @@ var AbstractView	= require( 'abstracts/AbstractView' );
 var MainView		= require( 'MainView' );
 
 
-function WebGLScene() {
-	AbstractView.call( this );
+class WebGLScene extends AbstractView {
 	
-	this.scene		= null;
-	this.camera		= null;
-	this.renderer	= null;
-}
-
-
-WebGLScene.prototype				= Object.create( AbstractView.prototype );
-WebGLScene.prototype.constructor	= WebGLScene;
-
-
-WebGLScene.prototype.init = function() {
-	console.log( '🎥 WebGLScene.init()' );
 	
-	AbstractView.prototype.init.call( this );
-	
-	if ( Config.WEBGL_DEBUG )
-		_initHelpers.call( this );
-};
-
-
-WebGLScene.prototype.initDOM = function() {
-	this.$webGLCont = $( document.getElementById( 'webgl-container' ) );
-};
-
-
-WebGLScene.prototype.initEl = function() {
-	_initScene.call( this );
-};
-
-
-WebGLScene.prototype.bindEvents = function() {
-	AbstractView.prototype.bindEvents.call( this );
-	
-	MainView.bind( MainView.E.RAF, this.raf, this );
-};
-
-
-var _initScene = function() {
-	this.scene		= new THREE.Scene();
-	
-	this.camera		= new THREE.PerspectiveCamera( 45, MainView.bW / MainView.wH, 0.1, 10000 );
-	this.cameraTg	= new THREE.Vector3( 0, 0, 0 );
-	this.camera.lookAt( this.cameraTg );
-	this.camera.position.set( 0, 0, 100 );
-	
-	this.renderer	= new THREE.WebGLRenderer( {
-		antialias: true
-	} );
-	this.renderer.setSize( MainView.bW, MainView.wH );
-	this.$webGLCont[0].appendChild( this.renderer.domElement );
-};
-
-
-WebGLScene.prototype.resize = function() {
-	this.camera.aspect = MainView.bW / MainView.wH;
-	this.camera.updateProjectionMatrix();
-	
-	this.renderer.setSize( MainView.bW, MainView.wH );
-};
-
-
-WebGLScene.prototype.raf = function() {
-	this.renderer.render( this.scene, this.camera );
-};
-
-
-WebGLScene.prototype.add = function( obj ) {
-	if ( obj !== null )
-		this.scene.add( obj );
-};
-
-
-WebGLScene.prototype.remove = function( obj ) {
-	if ( obj )
-		this.scene.remove( obj );
-	
-	var child;
-	for ( var i = 0; i < obj.children.length; i++ ) {
-		child = obj.children[ i ];
+	constructor() {
+		super();
 		
-		this.disposeGeometry( child.geometry );
-		this.disposeMaterial( child.material );
-		this.disposeTexture( child.texture );
+		this.scene		= null;
+		this.camera		= null;
+		this.renderer	= null;
 	}
-};
-
-
-WebGLScene.prototype.disposeGeometry = function( geometry ) {
-	if ( geometry )
-		geometry.dispose();
-};
-
-
-WebGLScene.prototype.disposeMaterial = function( material ) {
-	if ( material )
-		material.dispose();
-};
-
-
-WebGLScene.prototype.disposeTexture = function( texture ) {
-	if ( texture )
-		texture.dispose();
-};
-
-
-var _initHelpers = function() {
-	var cameraDebug = this.camera.clone();
-	this.add( cameraDebug );
-	this.camera.far = 100000;
-	this.camera.updateProjectionMatrix();
 	
-	var controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
 	
-	var cameraHelper = new THREE.CameraHelper( cameraDebug );
-	this.add( cameraHelper );
+	init() {
+		console.log( '🎥 WebGLScene.init()' );
+		
+		super.init();
+		
+		if ( Config.WEBGL_DEBUG )
+			this._initHelpers();
+	};
 	
-	var axisHelper = new THREE.AxisHelper( 300 );
-	this.add( axisHelper );
-};
+	
+	initDOM() {
+		this.$webGLCont = $( document.getElementById( 'webgl-container' ) );
+	};
+	
+	
+	initEl() {
+		this._initScene();
+	};
+	
+	
+	bindEvents() {
+		super.bindEvents();
+		
+		MainView.bind( MainView.E.RAF, this.raf, this );
+	};
+	
+	
+	_initScene() {
+		this.scene		= new THREE.Scene();
+		
+		this.camera		= new THREE.PerspectiveCamera( 45, MainView.bW / MainView.wH, 0.1, 10000 );
+		this.cameraTg	= new THREE.Vector3( 0, 0, 0 );
+		this.camera.lookAt( this.cameraTg );
+		this.camera.position.set( 0, 0, 100 );
+		
+		this.renderer	= new THREE.WebGLRenderer( {
+			antialias: true
+		} );
+		this.renderer.setSize( MainView.bW, MainView.wH );
+		this.$webGLCont[0].appendChild( this.renderer.domElement );
+	};
+	
+	
+	resize() {
+		this.camera.aspect = MainView.bW / MainView.wH;
+		this.camera.updateProjectionMatrix();
+		
+		this.renderer.setSize( MainView.bW, MainView.wH );
+	};
+	
+	
+	raf() {
+		this.renderer.render( this.scene, this.camera );
+	};
+	
+	
+	add( obj ) {
+		if ( obj !== null )
+			this.scene.add( obj );
+	};
+	
+	
+	remove( obj ) {
+		if ( obj )
+			this.scene.remove( obj );
+		
+		var child;
+		for ( var i = 0; i < obj.children.length; i++ ) {
+			child = obj.children[ i ];
+			
+			this.disposeGeometry( child.geometry );
+			this.disposeMaterial( child.material );
+			this.disposeTexture( child.texture );
+		}
+	};
+	
+	
+	disposeGeometry( geometry ) {
+		if ( geometry )
+			geometry.dispose();
+	};
+	
+	
+	disposeMaterial( material ) {
+		if ( material )
+			material.dispose();
+	};
+	
+	
+	disposeTexture( texture ) {
+		if ( texture )
+			texture.dispose();
+	};
+	
+	
+	_initHelpers() {
+		var cameraDebug = this.camera.clone();
+		this.add( cameraDebug );
+		this.camera.far = 100000;
+		this.camera.updateProjectionMatrix();
+		
+		var controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
+		
+		var cameraHelper = new THREE.CameraHelper( cameraDebug );
+		this.add( cameraHelper );
+		
+		var axisHelper = new THREE.AxisHelper( 300 );
+		this.add( axisHelper );
+	};	
+	
+	
+}
 
 
 module.exports = WebGLScene;

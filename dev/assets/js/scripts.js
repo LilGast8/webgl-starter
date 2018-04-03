@@ -1,81 +1,90 @@
-(function(){function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s}return e})()({1:[function(require,module,exports){
-'use strict';
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 
 
-var MainView	= require( 'MainView' );
+// var MainView	= require( 'MainView' );
 var WebGLScene	= require( 'WebGLScene' );
 var Lights		= require( 'Lights' );
 var Sphere		= require( 'Sphere' );
 
 
-function App() {
+class App {
+	
+	
+	constructor() {
+		
+	}
+	
+	
+	init() {
+		console.log( '🐣 App.init()' );
+		
+		this.initEl();
+	};
+	
+	
+	initEl() {
+		this._initScene();
+		// this._initLights();
+		this._initObjects();
+	};
+	
+	
+	_initScene() {
+		this.webGLScene = new WebGLScene();
+		this.webGLScene.init();
+	};
+	
+		
+	_initLights() {
+		this.lights = new Lights( this.webGLScene );
+		this.lights.init();
+	};
+	
+	
+	_initObjects() {
+		var sphere = new Sphere( this.webGLScene );
+		sphere.init();
+	};
+	
 	
 }
-
-
-App.prototype.init = function() {
-	console.log( '🐣 App.init()' );
-	
-	this.initEl();
-};
-
-
-App.prototype.initEl = function() {
-	_initScene.call( this );
-	// _initLights.call( this );
-	_initObjects.call( this );
-};
-
-
-var _initScene = function() {
-	this.webGLScene = new WebGLScene();
-	this.webGLScene.init();
-};
-
-	
-var _initLights = function() {
-	this.lights = new Lights( this.webGLScene );
-	this.lights.init();
-};
-
-
-var _initObjects = function() {
-	var sphere = new Sphere( this.webGLScene );
-	sphere.init();
-};
 
 
 module.exports = App;
 
 
-},{"Lights":4,"MainView":6,"Sphere":7,"WebGLScene":8}],2:[function(require,module,exports){
-'use strict';
+},{"Lights":4,"Sphere":7,"WebGLScene":8}],2:[function(require,module,exports){
 
 
-function Config() {
-	this.ENV			= 'dev'; // 'dev' or 'prod'
-	this.IS_DEV			= null;
-	this.IS_PROD		= null;
-	
-	this.HAS_FPS_STATS	= true;
-	this.WEBGL_DEBUG	= true;
+class Config {
 	
 	
-	this.init();
+	constructor() {
+		this.ENV			= 'dev'; // 'dev' or 'prod'
+		this.IS_DEV			= null;
+		this.IS_PROD		= null;
+		
+		this.HAS_FPS_STATS	= true;
+		this.WEBGL_DEBUG	= true;
+		
+		
+		this.init();
+	}
+	
+	
+	init() {
+		this.IS_DEV		= this.ENV == 'dev';
+		this.IS_PROD	= this.ENV == 'prod';
+	}
+	
+	
 }
-
-
-Config.prototype.init = function() {
-	this.IS_DEV		= this.ENV == 'dev';
-	this.IS_PROD	= this.ENV == 'prod';
-};
 
 
 module.exports = new Config();
 
 
 },{}],3:[function(require,module,exports){
-'use strict';
 
 
 var signals	= require( 'signals' );
@@ -83,80 +92,86 @@ var signals	= require( 'signals' );
 var Config	= require( 'Config' );
 
 
-function CustomEvent() {
-	this.e						= {};
-	this.E						= {};
+class CustomEvent {
 	
-	this.isWarningDispatched	= false;
-}
-
-
-CustomEvent.prototype.bind = function( name, fct, context ) {
-	if ( !name || !fct ) {
-		if ( !Config.IS_PROD ) {
-			var missingParams;
+	
+	constructor() {
+		this.e						= {};
+		this.E						= {};
+		
+		this.isWarningDispatched	= false;
+	}
+	
+	
+	bind( name, fct, context ) {
+		if ( !name || !fct ) {
+			if ( !Config.IS_PROD ) {
+				let missingParams;
+				
+				if ( !name && !fct )
+					missingParams = 'name and a function';
+				else if ( !name )
+					missingParams = 'name';
+				else if ( !fct )
+					missingParams = 'function';
+				
+				console.warn( 'You must to provide a ' + missingParams + ' to the custom event you want to bind.' );
+			}
 			
-			if ( !name && !fct )
-				missingParams = 'name and a function';
-			else if ( !name )
-				missingParams = 'name';
-			else if ( !fct )
-				missingParams = 'function';
-			
-			console.warn( 'You must to provide a ' + missingParams + ' to the custom event you want to bind.' );
+			return;
 		}
 		
-		return;
-	}
-	
-	if ( !context && !Config.IS_PROD )
-		console.warn( 'Bind "' + name + '" custom event without context.' );
-	
-	if ( this.e[ name ] === undefined ) // if the custom event doesn't exist, create it
-		this.e[ name ] = new signals.Signal();
-	
-	this.e[ name ].add( fct, context ); // add the listener to the custom event
-};
-
-
-CustomEvent.prototype.unbind = function( name, fct, context ) {
-	if ( !name ) {
-		if ( !Config.IS_PROD )
-			console.warn( 'You must to define the name of the custom event you want to unbind.' );
+		if ( !context && !Config.IS_PROD )
+			console.warn( 'Bind "' + name + '" custom event without context.' );
 		
-		return;
+		if ( this.e[ name ] === undefined ) // if the custom event doesn't exist, create it
+			this.e[ name ] = new signals.Signal();
+		
+		this.e[ name ].add( fct, context ); // add the listener to the custom event
 	}
 	
 	
-	if ( fct !== undefined && fct !== null ) // remove a single listener from the custom event
-		this.e[ name ].remove( fct, context );
-	
-	else // remove all listeners from the custom event
-		this.e[ name ].removeAll();
-	
-	
-	if ( this.e[ name ].getNumListeners() === 0 ) { // dispose & delete the event if listeners no longer exist
-		this.e[ name ].dispose();
-		delete this.e[ name ];
-	}
-};
-
-
-CustomEvent.prototype.dispatch = function( name, params ) {
-	if ( this.e[ name ] === undefined ) { // if the event is not registred
-		if ( !Config.IS_PROD && !this.isWarningDispatched ) {
-			console.warn( 'Trying to dispath "' + name + '" custom event which is undefined.' );
+	unbind( name, fct, context ) {
+		if ( !name ) {
+			if ( !Config.IS_PROD )
+				console.warn( 'You must to define the name of the custom event you want to unbind.' );
 			
-			this.isWarningDispatched = true;
+			return;
 		}
 		
-		return;
+		
+		if ( fct !== undefined && fct !== null ) // remove a single listener from the custom event
+			this.e[ name ].remove( fct, context );
+		
+		else // remove all listeners from the custom event
+			this.e[ name ].removeAll();
+		
+		
+		if ( this.e[ name ].getNumListeners() === 0 ) { // dispose & delete the event if listeners no longer exist
+			this.e[ name ].dispose();
+			delete this.e[ name ];
+		}
 	}
 	
-	if ( params === undefined )
-		this.e[ name ].dispatch();
-	else
-		this.e[ name ].dispatch( params );
+	
+	dispatch( name, params ) {
+		if ( this.e[ name ] === undefined ) { // if the event is not registred
+			if ( !Config.IS_PROD && !this.isWarningDispatched ) {
+				console.warn( 'Trying to dispath "' + name + '" custom event which is undefined.' );
+				
+				this.isWarningDispatched = true;
+			}
+			
+			return;
+		}
+		
+		if ( params === undefined )
+			this.e[ name ].dispatch();
+		else
+			this.e[ name ].dispatch( params );
+	}
+	
+	
 };
 
 
@@ -164,52 +179,52 @@ module.exports = CustomEvent;
 
 
 },{"Config":2,"signals":13}],4:[function(require,module,exports){
-'use strict';
 
 
 var AbstractView	= require( 'abstracts/AbstractView' );
 var MainView		= require( 'MainView' );
 
 
-function Lights( webGLScene ) {
-	AbstractView.call( this );
+class Lights extends AbstractView {
 	
-	this.webGLScene = webGLScene;
+	
+	constructor( webGLScene ) {
+		super();
+		
+		this.webGLScene = webGLScene;
+	}
+	
+	
+	init() {
+		console.log( '💡 Lights.init()' );
+		
+		super.init();
+	};
+	
+	
+	initEl() {
+		this._initLights();
+	};
+	
+	
+	bindEvents() {
+		super.bindEvents();
+	};
+	
+	
+	_initLights() {
+		this.directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+		this.webGLScene.add( this.directionalLight );
+	};
+	
+	
 }
-
-
-Lights.prototype				= Object.create( AbstractView.prototype );
-Lights.prototype.constructor	= Lights;
-
-
-Lights.prototype.init = function() {
-	console.log( '💡 Lights.init()' );
-	
-	AbstractView.prototype.init.call( this );
-};
-
-
-Lights.prototype.initEl = function() {
-	_initLights.call( this );
-};
-
-
-Lights.prototype.bindEvents = function() {
-	AbstractView.prototype.bindEvents.call( this );
-};
-
-
-var _initLights = function() {
-	this.directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
-	this.webGLScene.add( this.directionalLight );
-};
 
 
 module.exports = Lights;
 
 
 },{"MainView":6,"abstracts/AbstractView":9}],5:[function(require,module,exports){
-'use strict';
 
 
 require( 'zepto' );
@@ -219,26 +234,32 @@ var MainView	= require( 'MainView' );
 var App			= require( 'App' );
 
 
-
-function Main() {}
-
-
-Main.prototype.init = function() {
-	MainView.init();
+class Main {
 	
-	var app = new App();
-	app.init();
+	
+	constructor() {
+		
+	}
+	
+	
+	init() {
+		MainView.init();
+		
+		var app = new App();
+		app.init();
+	}
+	
+	
 };
 
 
 var main = new Main();
 
 
-$( main.init.bind( main ) );
+$( main.init() );
 
 
 },{"App":1,"MainView":6,"zepto":17}],6:[function(require,module,exports){
-'use strict';
 
 
 require( 'greensock/TweenMax' );
@@ -249,213 +270,214 @@ var FPSStats		= require( 'utils/FPSStats' );
 var Math_			= require( 'utils/Math' );
 
 
-function MainView() {
-	CustomEvent.call( this );
+class  MainView extends CustomEvent {
 	
-	this.E = {
-		RESIZE:			'resize',
-		RAF:			'raf',
-		MOUSE_MOVE:		'mousemove',
-		MOUSE_DOWN:		'mousedown',
-		MOUSE_UP:		'mouseup',
-		TOUCH_MOVE:		'touchmove',
-		TOUCH_START:	'touchstart',
-		TOUCH_END:		'touchend',
-		WINDOW_OUT:		'windowout',
-		WINDOW_IN:		'windowin'
+	
+	constructor() {
+		super();
+		
+		this.E = {
+			RESIZE:			'resize',
+			RAF:			'raf',
+			MOUSE_MOVE:		'mousemove',
+			MOUSE_DOWN:		'mousedown',
+			MOUSE_UP:		'mouseup',
+			TOUCH_MOVE:		'touchmove',
+			TOUCH_START:	'touchstart',
+			TOUCH_END:		'touchend',
+			WINDOW_OUT:		'windowout',
+			WINDOW_IN:		'windowin'
+		};
+		
+		this.bW		= null; // body width
+		this.bH		= null; // body height
+		this.wW		= null; // window width
+		this.wH		= null; // window height
+		this.cX		= null; // center X
+		this.cY		= null; // center Y
+		this.sY		= null; // scroll Y
+		this.siY	= null; // scroll inertia Y
+		this.mX		= null; // mouse X
+		this.mY		= null; // mouse Y
+		this.miX	= null; // mouse inertia X
+		this.miY	= null; // mouse inertia Y
+		this.tX		= null; // touch X
+		this.tY		= null; // touch Y
+		
+		this.SCROLL_INERTIA		= 0.09;
+		this.MOUSE_INERTIA		= 0.05;
+		
+		this.isWindowFocused	= true;
+	}
+	
+	
+	init() {
+		console.log( '🐣 MainView.init()' );
+		
+		this.initDOM();
+		this.initEl();
+		this.bindEvents();
+		
+		this.resize();
 	};
 	
-	this.bW		= null; // body width
-	this.bH		= null; // body height
-	this.wW		= null; // window width
-	this.wH		= null; // window height
-	this.cX		= null; // center X
-	this.cY		= null; // center Y
-	this.sY		= null; // scroll Y
-	this.siY	= null; // scroll inertia Y
-	this.mX		= null; // mouse X
-	this.mY		= null; // mouse Y
-	this.miX	= null; // mouse inertia X
-	this.miY	= null; // mouse inertia Y
-	this.tX		= null; // touch X
-	this.tY		= null; // touch Y
 	
-	this.SCROLL_INERTIA		= 0.09;
-	this.MOUSE_INERTIA		= 0.05;
+	initDOM() {
+		this.$window	= $( window );
+		this.$html		= $( 'html' );
+		this.$body		= $( document.body );
+		this.$mainCont	= $( document.getElementById( 'main-container' ) );
+	};
 	
-	this.isWindowFocused	= true;
+	
+	initEl() {
+		if ( Config.IS_DEV )
+			FPSStats.init();
+	};
+	
+	
+	bindEvents() {
+		this.$window.on( 'resize', $.proxy( this.resize, this ) );
+		TweenLite.ticker.addEventListener( 'tick', this.raf, this );
+		this.$window.on( 'mousemove', $.proxy( this.mouseMove, this ) );
+		// this.$window.on( 'mousedown', $.proxy( this.mouseDown, this ) );
+		// this.$window.on( 'mouseup', $.proxy( this.mouseUp, this ) );
+		// this.$window.on( 'touchmove', $.proxy( this.touchMove, this ) );
+		// this.$window.on( 'touchstart', $.proxy( this.touchStart, this ) );
+		// this.$window.on( 'touchend', $.proxy( this.touchEnd, this ) );
+		// this.$window.on( 'blur', $.proxy( this.windowOut, this ) );
+		// this.$window.on( 'focus', $.proxy( this.windowIn, this ) );
+	};
+	
+	
+	resize() {
+		this._setResizeProps();
+		
+		this.dispatch( this.E.RESIZE );
+	};
+	
+	
+	_setResizeProps() {
+		this.bW = this.$body.width();
+		this.bH = this.$body.height();
+		this.wW = this.$window.width();
+		this.wH = this.$window.height();
+		this.cX = Math.round( this.bW / 2 );
+		this.cY = Math.round( this.wH / 2 );
+		
+		if ( this.mX === null && this.mY === null ) {
+			this.mX = this.cX;
+			this.mY = this.cY;
+		}
+	};
+	
+	
+	raf() {
+		if ( Config.IS_DEV )
+			FPSStats.begin();
+		
+		
+		this._setRafProps();
+		
+		this.dispatch( this.E.RAF );
+		
+		
+		if ( Config.IS_DEV )
+			FPSStats.end();
+	};
+	
+	
+	_setRafProps() {
+		this.sY		= this.$window[0].scrollY || this.$window[0].pageYOffset;
+		this.siY	= Math_.getInertia( this.sY, this.siY, this.SCROLL_INERTIA, true );
+		
+		this.miX	= Math_.getInertia( this.mX, this.miX, this.MOUSE_INERTIA, true );
+		this.miY	= Math_.getInertia( this.mY, this.miY, this.MOUSE_INERTIA, true );
+	};
+	
+	
+	mouseMove( e ) {
+		this.mX = e.clientX;
+		this.mY = e.clientY;
+		
+		// console.log( 'MainView _mouseMove()', this.mX, this.mY );
+		
+		this.dispatch( this.E.MOUSE_MOVE );
+	};
+	
+	
+	mouseDown() {
+		this.dispatch( this.E.MOUSE_DOWN );
+	};
+	
+	
+	mouseUp() {
+		this.dispatch( this.E.MOUSE_UP );
+	};
+	
+	
+	touchMove( e ) {
+		e.preventDefault();
+		
+		// Zepto
+		this.tX = e.touches[0].pageX;
+		this.tY = e.touches[0].pageY;
+		// jQuery
+		// this.tX = e.originalEvent.touches[0].pageX;
+		// this.tY = e.originalEvent.touches[0].pageY;
+		
+		this.dispatch( this.E.TOUCH_MOVE );
+	};
+	
+	
+	touchStart() {
+		this.dispatch( this.E.TOUCH_START );
+	};
+	
+	
+	touchEnd() {
+		this.dispatch( this.E.TOUCH_END );
+	};
+	
+	
+	windowOut() {
+		this.isWindowFocused = false;
+		
+		this.dispatch( this.E.WINDOW_OUT );
+	};
+	
+	
+	windowIn() {
+		this.isWindowFocused = true;
+		
+		this.dispatch( this.E.WINDOW_IN );
+	};
+	
+	
+	setScrollY( scrollY ) {
+		this.sY		= scrollY;
+		this.siY	= scrollY;
+		
+		this.$window[0].scrollTo( 0, scrollY );
+	};
+	
+	
+	setBodyHeight( bodyH ) {
+		if ( bodyH === null )
+			bodyH = this.$pageCont.height();
+		
+		this.bH						= bodyH;
+		this.$body[0].style.height	= this.bH + 'px';
+	};
+	
+	
 }
-
-
-MainView.prototype				= Object.create( CustomEvent.prototype );
-MainView.prototype.constructor	= MainView;
-
-
-MainView.prototype.init = function() {
-	console.log( '🐣 MainView.init()' );
-	
-	this.initDOM();
-	this.initEl();
-	this.bindEvents();
-	
-	this.resize();
-};
-
-
-MainView.prototype.initDOM = function() {
-	this.$window	= $( window );
-	this.$html		= $( 'html' );
-	this.$body		= $( document.body );
-	this.$mainCont	= $( document.getElementById( 'main-container' ) );
-};
-
-
-MainView.prototype.initEl = function() {
-	if ( Config.IS_DEV )
-		FPSStats.init();
-};
-
-
-MainView.prototype.bindEvents = function() {
-	this.$window.on( 'resize', $.proxy( this.resize, this ) );
-	TweenLite.ticker.addEventListener( 'tick', this.raf, this );
-	this.$window.on( 'mousemove', $.proxy( this.mouseMove, this ) );
-	// this.$window.on( 'mousedown', $.proxy( this.mouseDown, this ) );
-	// this.$window.on( 'mouseup', $.proxy( this.mouseUp, this ) );
-	// this.$window.on( 'touchmove', $.proxy( this.touchMove, this ) );
-	// this.$window.on( 'touchstart', $.proxy( this.touchStart, this ) );
-	// this.$window.on( 'touchend', $.proxy( this.touchEnd, this ) );
-	// this.$window.on( 'blur', $.proxy( this.windowOut, this ) );
-	// this.$window.on( 'focus', $.proxy( this.windowIn, this ) );
-};
-
-
-MainView.prototype.resize = function() {
-	_setResizeProps.call( this );
-	
-	this.dispatch( this.E.RESIZE );
-};
-
-
-var _setResizeProps = function() {
-	this.bW = this.$body.width();
-	this.bH = this.$body.height();
-	this.wW = this.$window.width();
-	this.wH = this.$window.height();
-	this.cX = Math.round( this.bW / 2 );
-	this.cY = Math.round( this.wH / 2 );
-	
-	if ( this.mX === null && this.mY === null ) {
-		this.mX = this.cX;
-		this.mY = this.cY;
-	}
-};
-
-
-MainView.prototype.raf = function() {
-	if ( Config.IS_DEV )
-		FPSStats.begin();
-	
-	
-	_setRafProps.call( this );
-	
-	this.dispatch( this.E.RAF );
-	
-	
-	if ( Config.IS_DEV )
-		FPSStats.end();
-};
-
-
-var _setRafProps = function() {
-	this.sY		= this.$window[0].scrollY || this.$window[0].pageYOffset;
-	this.siY	= Math_.getInertia( this.sY, this.siY, this.SCROLL_INERTIA, true );
-	
-	this.miX	= Math_.getInertia( this.mX, this.miX, this.MOUSE_INERTIA, true );
-	this.miY	= Math_.getInertia( this.mY, this.miY, this.MOUSE_INERTIA, true );
-};
-
-
-MainView.prototype.mouseMove = function( e ) {
-	this.mX = e.clientX;
-	this.mY = e.clientY;
-	
-	// console.log( 'MainView _mouseMove()', this.mX, this.mY );
-	
-	this.dispatch( this.E.MOUSE_MOVE );
-};
-
-
-MainView.prototype.mouseDown = function() {
-	this.dispatch( this.E.MOUSE_DOWN );
-};
-
-
-MainView.prototype.mouseUp = function() {
-	this.dispatch( this.E.MOUSE_UP );
-};
-
-
-MainView.prototype.touchMove = function( e ) {
-	e.preventDefault();
-	
-	// Zepto
-	this.tX = e.touches[0].pageX;
-	this.tY = e.touches[0].pageY;
-	// jQuery
-	// this.tX = e.originalEvent.touches[0].pageX;
-	// this.tY = e.originalEvent.touches[0].pageY;
-	
-	this.dispatch( this.E.TOUCH_MOVE );
-};
-
-
-MainView.prototype.touchStart = function() {
-	this.dispatch( this.E.TOUCH_START );
-};
-
-
-MainView.prototype.touchEnd = function() {
-	this.dispatch( this.E.TOUCH_END );
-};
-
-
-MainView.prototype.windowOut = function() {
-	this.isWindowFocused = false;
-	
-	this.dispatch( this.E.WINDOW_OUT );
-};
-
-
-MainView.prototype.windowIn = function() {
-	this.isWindowFocused = true;
-	
-	this.dispatch( this.E.WINDOW_IN );
-};
-
-
-MainView.prototype.setScrollY = function( scrollY ) {
-	this.sY		= scrollY;
-	this.siY	= scrollY;
-	
-	this.$window[0].scrollTo( 0, scrollY );
-};
-
-
-MainView.prototype.setBodyHeight = function( bodyH ) {
-	if ( bodyH === null )
-		bodyH = this.$pageCont.height();
-	
-	this.bH						= bodyH;
-	this.$body[0].style.height	= this.bH + 'px';
-};
 
 
 module.exports = new MainView();
 
 
 },{"Config":2,"CustomEvent":3,"greensock/TweenMax":12,"utils/FPSStats":10,"utils/Math":11}],7:[function(require,module,exports){
-'use strict';
 
 
 // var DatGUI		= require( 'DatGUI' );
@@ -465,76 +487,81 @@ var AbstractView	= require( 'abstracts/AbstractView' );
 var MainView		= require( 'MainView' );
 
 
-function Sphere( webGLScene ) {
-	AbstractView.call( this );
+class Sphere extends AbstractView {
 	
-	this.webGLScene = webGLScene;
 	
-	this.sphereUniforms	= {};
-	this.sphere			= null;
-}
-
-
-Sphere.prototype				= Object.create( AbstractView.prototype );
-Sphere.prototype.constructor	= Sphere;
-
-
-Sphere.prototype.init = function() {
-	console.log( '🌍 Sphere.init()' );
+	constructor( webGLScene ) {
+		super();
+		
+		this.webGLScene = webGLScene;
+		
+		this.sphereUniforms	= {};
+		this.sphere			= null;
+	}
 	
-	AbstractView.prototype.init.call( this );
-};
-
-
-Sphere.prototype.initEl = function() {
-	_initUniforms.call(	this );
-	_initObject.call(	this );
-};
-
-
-Sphere.prototype.bindEvents = function() {
-	AbstractView.prototype.bindEvents.call( this );
 	
-	MainView.bind( MainView.E.RAF, this.raf, this );
-};
-
-
-Sphere.prototype.raf = function() {
-	
-};
-
-
-var _initUniforms = function() {
-	this.sphereUniforms = {
-		// diffuse: {
-		// 	type:	'c',
-		// 	value:	new THREE.Color( 0xd6e5e8 )
-		// }
+	init() {
+		console.log( '🌍 Sphere.init()' );
+		
+		super.init();
 	};
 	
-	/*this.sphereUniforms = THREE.UniformsUtils.merge( [
-		THREE.ShaderLib.phong.uniforms,
-		customUniforms
-	] );*/
-};
-
-
-var _initObject = function() {
-	var geometry	= new THREE.SphereBufferGeometry( 20, 32, 32 );
-	var material = new THREE.ShaderMaterial( {
-		uniforms:		this.sphereUniforms,
-		vertexShader:	glslify(["#define GLSLIFY 1\n\nvoid main() {\n\t\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n\t\n}\n\n"]),
-		fragmentShader:	glslify(["#define GLSLIFY 1\n\nvoid main() {\n\t\n\tgl_FragColor = vec4( 1.0, 0.0, 0.5, 1.0 );\n\t\n}\n"]),
-		wireframe:		true,
-		// lights:			true,
-		// transparent:	true,
-		// fog:			true,
-		// side:			THREE.DoubleSide,
-		// visible:		false,
-	} );
-	this.sphere		= new THREE.Mesh( geometry, material );
-	this.webGLScene.add( this.sphere );
-};
+	
+	initEl() {
+		this._initUniforms();
+		this._initObject();
+	};
+	
+	
+	bindEvents() {
+		super.bindEvents();
+		
+		MainView.bind( MainView.E.RAF, this.raf, this );
+	};
+	
+	
+	raf() {
+		
+	};
+	
+	
+	_initUniforms() {
+		this.sphereUniforms = {
+			// diffuse: {
+			// 	type:	'c',
+			// 	value:	new THREE.Color( 0xd6e5e8 )
+			// }
+		};
+		
+		/*this.sphereUniforms = THREE.UniformsUtils.merge( [
+			THREE.ShaderLib.phong.uniforms,
+			customUniforms
+		] );*/
+	};
+	
+	
+	_initObject() {
+		var geometry	= new THREE.SphereBufferGeometry( 20, 32, 32 );
+		/*var material =  new THREE.MeshPhongMaterial( {
+			color: 0xfe7373
+		} );*/
+		var material	= new THREE.ShaderMaterial( {
+			uniforms:		this.sphereUniforms,
+			vertexShader:	glslify(["#define GLSLIFY 1\n\nvoid main() {\n\t\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n\t\n}\n\n"]),
+			fragmentShader:	glslify(["#define GLSLIFY 1\n\nvoid main() {\n\t\n\tgl_FragColor = vec4( 1.0, 0.0, 0.5, 1.0 );\n\t\n}\n"]),
+			wireframe:		true,
+			// lights:			true,
+			// transparent:	true,
+			// fog:			true,
+			// side:			THREE.DoubleSide,
+			// visible:		false,
+		} );
+		this.sphere		= new THREE.Mesh( geometry, material );
+		this.webGLScene.add( this.sphere );
+	};
+	
+	
+}
 
 
 module.exports = Sphere;
@@ -542,7 +569,6 @@ module.exports = Sphere;
 
 },{"MainView":6,"abstracts/AbstractView":9,"glslify":18}],8:[function(require,module,exports){
 (function (global){
-'use strict';
 
 
 global.THREE	= require( 'three.js/three.min' );
@@ -553,128 +579,130 @@ var AbstractView	= require( 'abstracts/AbstractView' );
 var MainView		= require( 'MainView' );
 
 
-function WebGLScene() {
-	AbstractView.call( this );
+class WebGLScene extends AbstractView {
 	
-	this.scene		= null;
-	this.camera		= null;
-	this.renderer	= null;
-}
-
-
-WebGLScene.prototype				= Object.create( AbstractView.prototype );
-WebGLScene.prototype.constructor	= WebGLScene;
-
-
-WebGLScene.prototype.init = function() {
-	console.log( '🎥 WebGLScene.init()' );
 	
-	AbstractView.prototype.init.call( this );
-	
-	if ( Config.WEBGL_DEBUG )
-		_initHelpers.call( this );
-};
-
-
-WebGLScene.prototype.initDOM = function() {
-	this.$webGLCont = $( document.getElementById( 'webgl-container' ) );
-};
-
-
-WebGLScene.prototype.initEl = function() {
-	_initScene.call( this );
-};
-
-
-WebGLScene.prototype.bindEvents = function() {
-	AbstractView.prototype.bindEvents.call( this );
-	
-	MainView.bind( MainView.E.RAF, this.raf, this );
-};
-
-
-var _initScene = function() {
-	this.scene		= new THREE.Scene();
-	
-	this.camera		= new THREE.PerspectiveCamera( 45, MainView.bW / MainView.wH, 0.1, 10000 );
-	this.cameraTg	= new THREE.Vector3( 0, 0, 0 );
-	this.camera.lookAt( this.cameraTg );
-	this.camera.position.set( 0, 0, 100 );
-	
-	this.renderer	= new THREE.WebGLRenderer( {
-		antialias: true
-	} );
-	this.renderer.setSize( MainView.bW, MainView.wH );
-	this.$webGLCont[0].appendChild( this.renderer.domElement );
-};
-
-
-WebGLScene.prototype.resize = function() {
-	this.camera.aspect = MainView.bW / MainView.wH;
-	this.camera.updateProjectionMatrix();
-	
-	this.renderer.setSize( MainView.bW, MainView.wH );
-};
-
-
-WebGLScene.prototype.raf = function() {
-	this.renderer.render( this.scene, this.camera );
-};
-
-
-WebGLScene.prototype.add = function( obj ) {
-	if ( obj !== null )
-		this.scene.add( obj );
-};
-
-
-WebGLScene.prototype.remove = function( obj ) {
-	if ( obj )
-		this.scene.remove( obj );
-	
-	var child;
-	for ( var i = 0; i < obj.children.length; i++ ) {
-		child = obj.children[ i ];
+	constructor() {
+		super();
 		
-		this.disposeGeometry( child.geometry );
-		this.disposeMaterial( child.material );
-		this.disposeTexture( child.texture );
+		this.scene		= null;
+		this.camera		= null;
+		this.renderer	= null;
 	}
-};
-
-
-WebGLScene.prototype.disposeGeometry = function( geometry ) {
-	if ( geometry )
-		geometry.dispose();
-};
-
-
-WebGLScene.prototype.disposeMaterial = function( material ) {
-	if ( material )
-		material.dispose();
-};
-
-
-WebGLScene.prototype.disposeTexture = function( texture ) {
-	if ( texture )
-		texture.dispose();
-};
-
-
-var _initHelpers = function() {
-	var cameraDebug = this.camera.clone();
-	this.add( cameraDebug );
-	this.camera.far = 100000;
-	this.camera.updateProjectionMatrix();
 	
-	var controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
 	
-	var cameraHelper = new THREE.CameraHelper( cameraDebug );
-	this.add( cameraHelper );
+	init() {
+		console.log( '🎥 WebGLScene.init()' );
+		
+		super.init();
+		
+		if ( Config.WEBGL_DEBUG )
+			this._initHelpers();
+	};
 	
-	var axisHelper = new THREE.AxisHelper( 300 );
-	this.add( axisHelper );
-};
+	
+	initDOM() {
+		this.$webGLCont = $( document.getElementById( 'webgl-container' ) );
+	};
+	
+	
+	initEl() {
+		this._initScene();
+	};
+	
+	
+	bindEvents() {
+		super.bindEvents();
+		
+		MainView.bind( MainView.E.RAF, this.raf, this );
+	};
+	
+	
+	_initScene() {
+		this.scene		= new THREE.Scene();
+		
+		this.camera		= new THREE.PerspectiveCamera( 45, MainView.bW / MainView.wH, 0.1, 10000 );
+		this.cameraTg	= new THREE.Vector3( 0, 0, 0 );
+		this.camera.lookAt( this.cameraTg );
+		this.camera.position.set( 0, 0, 100 );
+		
+		this.renderer	= new THREE.WebGLRenderer( {
+			antialias: true
+		} );
+		this.renderer.setSize( MainView.bW, MainView.wH );
+		this.$webGLCont[0].appendChild( this.renderer.domElement );
+	};
+	
+	
+	resize() {
+		this.camera.aspect = MainView.bW / MainView.wH;
+		this.camera.updateProjectionMatrix();
+		
+		this.renderer.setSize( MainView.bW, MainView.wH );
+	};
+	
+	
+	raf() {
+		this.renderer.render( this.scene, this.camera );
+	};
+	
+	
+	add( obj ) {
+		if ( obj !== null )
+			this.scene.add( obj );
+	};
+	
+	
+	remove( obj ) {
+		if ( obj )
+			this.scene.remove( obj );
+		
+		var child;
+		for ( var i = 0; i < obj.children.length; i++ ) {
+			child = obj.children[ i ];
+			
+			this.disposeGeometry( child.geometry );
+			this.disposeMaterial( child.material );
+			this.disposeTexture( child.texture );
+		}
+	};
+	
+	
+	disposeGeometry( geometry ) {
+		if ( geometry )
+			geometry.dispose();
+	};
+	
+	
+	disposeMaterial( material ) {
+		if ( material )
+			material.dispose();
+	};
+	
+	
+	disposeTexture( texture ) {
+		if ( texture )
+			texture.dispose();
+	};
+	
+	
+	_initHelpers() {
+		var cameraDebug = this.camera.clone();
+		this.add( cameraDebug );
+		this.camera.far = 100000;
+		this.camera.updateProjectionMatrix();
+		
+		var controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
+		
+		var cameraHelper = new THREE.CameraHelper( cameraDebug );
+		this.add( cameraHelper );
+		
+		var axisHelper = new THREE.AxisHelper( 300 );
+		this.add( axisHelper );
+	};	
+	
+	
+}
 
 
 module.exports = WebGLScene;
@@ -683,143 +711,144 @@ module.exports = WebGLScene;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"Config":2,"MainView":6,"abstracts/AbstractView":9,"three.js/OrbitControls":15,"three.js/three.min":16}],9:[function(require,module,exports){
-'use strict';
 
 
 var CustomEvent	= require( 'CustomEvent' );
 var MainView	= require( 'MainView' );
 
 
-function AbstractView() {
-	CustomEvent.call( this );
+class AbstractView extends CustomEvent {
 	
-	this.E		= {
-		SHOW:	'show',
-		SHOWN:	'shown',
-		HIDE:	'hide',
-		HIDDEN:	'hidden'
+	
+	constructor() {
+		super();
+		
+		this.E		= {
+			SHOW:	'show',
+			SHOWN:	'shown',
+			HIDE:	'hide',
+			HIDDEN:	'hidden'
+		};
+		
+		this.tw		= {};
+		this.tl		= {};
+		
+		this.isInit	= false;
+	}
+	
+	
+	init() {
+		this.initDOM();
+		this.initEl();
+		this.initTl();
+		this.bindEvents();
+		
+		this.resize();
 	};
 	
-	this.tw		= {};
-	this.tl		= {};
 	
-	this.isInit	= false;
+	initDOM() {
+		// console.log( 'AbstractView.initDOM() — ', this.constructor.name );
+	};
+	
+	
+	initEl() {
+		// console.log( 'AbstractView.initEl() — ', this.constructor.name );
+	};
+	
+	
+	initTl() {
+		// console.log( 'AbstractView.initTl() — ', this.constructor.name );
+	};
+	
+	
+	bindEvents() {
+		// console.log( 'AbstractView.bindEvents() — ', this.constructor.name );
+		
+		MainView.bind( MainView.E.RESIZE, this.resize, this );
+	};
+	
+	
+	unbindEvents() {
+		// console.log( 'AbstractView.unbindEvents() — ', this.constructor.name );
+		
+		MainView.unbind( MainView.E.RESIZE, this.resize, this );
+	};
+	
+	
+	initView() {
+		// console.log( 'AbstractView.initView() — ', this.constructor.name );
+		
+		this.isInit = true;
+	};
+	
+	
+	show() {
+		// console.log( 'AbstractView.show() — ', this.constructor.name );
+	};
+	
+	
+	hide() {
+		// console.log( 'AbstractView.hide() — ', this.constructor.name );
+	};
+	
+	
+	resize() {
+		// console.log( 'AbstractView.resize() — ', this.constructor.name );
+	};
+	
+	
+	raf() {
+		// console.log( 'AbstractView.raf() — ', this.constructor.name );
+	};
+	
+	
+	destroy() {
+		this.isInit = false;
+		
+		this.unbindEvents();
+		
+		this.destroyGSAP();
+	};
+	
+	
+	destroyGSAP() {
+		/* tween */
+		for ( var tween in this.tw )
+			this.killTween( tween );
+		
+		/* timeline */
+		for ( var timeline in this.tl )
+			this.killTimeline( timeline );
+		
+		this.tl = {};
+		this.tw = {};
+	};
+	
+	
+	killTween( twName ) {
+		if ( !this.tw[ twName ] )
+			return;
+		
+		this.tw[ twName ].kill();
+		
+		this.tw[ twName ] = null;
+	};
+	
+	
+	killTimeline( tlName ) {
+		if ( !this.tl[ tlName ] )
+			return;
+		
+		this.tl[ tlName ].stop();
+		this.tl[ tlName ].clear();
+		this.tl[ tlName ].kill();
+		
+		this.tl[ tlName ] = null;
+	};
+	
+	
 }
-
-
-AbstractView.prototype				= Object.create( CustomEvent.prototype );
-AbstractView.prototype.constructor	= AbstractView;
-
-
-AbstractView.prototype.init = function() {
-	this.initDOM();
-	this.initEl();
-	this.initTl();
-	this.bindEvents();
-	
-	this.resize();
-};
-
-
-AbstractView.prototype.initDOM = function() {
-	// console.log( 'AbstractView.initDOM() — ', this.constructor.name );
-};
-
-
-AbstractView.prototype.initEl = function() {
-	// console.log( 'AbstractView.initEl() — ', this.constructor.name );
-};
-
-
-AbstractView.prototype.initTl = function() {
-	// console.log( 'AbstractView.initTl() — ', this.constructor.name );
-};
-
-
-AbstractView.prototype.bindEvents = function() {
-	// console.log( 'AbstractView.bindEvents() — ', this.constructor.name );
-	
-	MainView.bind( MainView.E.RESIZE, this.resize, this );
-};
-
-
-AbstractView.prototype.unbindEvents = function() {
-	// console.log( 'AbstractView.unbindEvents() — ', this.constructor.name );
-	
-	MainView.unbind( MainView.E.RESIZE, this.resize, this );
-};
-
-
-AbstractView.prototype.initView = function() {
-	// console.log( 'AbstractView.initView() — ', this.constructor.name );
-	
-	this.isInit = true;
-};
-
-
-AbstractView.prototype.show = function() {
-	// console.log( 'AbstractView.show() — ', this.constructor.name );
-};
-
-
-AbstractView.prototype.hide = function() {
-	// console.log( 'AbstractView.hide() — ', this.constructor.name );
-};
-
-
-AbstractView.prototype.resize = function() {
-	// console.log( 'AbstractView.resize() — ', this.constructor.name );
-};
-
-
-AbstractView.prototype.raf = function() {
-	// console.log( 'AbstractView.raf() — ', this.constructor.name );
-};
-
-
-AbstractView.prototype.destroy = function() {
-	this.isInit = false;
-	
-	this.unbindEvents();
-	
-	this.destroyGSAP();
-};
-
-
-AbstractView.prototype.destroyGSAP = function() {
-	/* tween */
-	for ( var tween in this.tw )
-		this.killTween( tween );
-	
-	/* timeline */
-	for ( var timeline in this.tl )
-		this.killTimeline( timeline );
-	
-	this.tl = {};
-	this.tw = {};
-};
-
-
-AbstractView.prototype.killTween = function( twName ) {
-	if ( !this.tw[ twName ] )
-		return;
-	
-	this.tw[ twName ].kill();
-	
-	this.tw[ twName ] = null;
-};
-
-
-AbstractView.prototype.killTimeline = function( tlName ) {
-	if ( !this.tl[ tlName ] )
-		return;
-	
-	this.tl[ tlName ].stop();
-	this.tl[ tlName ].clear();
-	this.tl[ tlName ].kill();
-	
-	this.tl[ tlName ] = null;
-};
 
 
 module.exports = AbstractView;
@@ -866,93 +895,98 @@ module.exports = new FPSStats();
 
 
 },{"stats.min":14}],11:[function(require,module,exports){
-'use strict';
 
 
-function Math_() {}
-
-
-Math_.getElPos = function( elW, elH, contW, contH ) {
-	var elRatio		= elW / elH;
-	var contRatio	= contW / contH;
-	var pos			= {
-		x: 0,
-		y: 0,
-		w: 0,
-		h: 0
-	};
+class Math_ {
 	
-	if ( elRatio < contRatio ) {
-		pos.w = contW;
-		pos.h = Math.round( pos.w / elRatio );
-		pos.y = Math.round( - ( pos.h - contH ) / 2 );
-	}
-	else {
-		pos.h = contH;
-		pos.w = Math.round ( pos.h * elRatio );
-		pos.x = Math.round ( - ( pos.w - contW ) / 2 );
+	
+	constructor() {
+		
 	}
 	
-	return pos;
-};
-
-
-Math_.getCropPos = function( elW, elH, contW, contH ) {
-	var elRatio		= elW / elH;
-	var contRatio	= contW / contH;
-	var pos			= {
-		x: 0,
-		y: 0,
-		w: 0,
-		h: 0
-	};
 	
-	if ( elRatio < contRatio ) {
-		pos.w = elW;
-		pos.h = Math.round( pos.w / contRatio );
-		pos.y = Math.round( - ( pos.h - elH ) / 2 );
+	getElPos( elW, elH, contW, contH ) {
+		const elRatio	= elW / elH;
+		const contRatio	= contW / contH;
+		const pos		= {
+			x: 0,
+			y: 0,
+			w: 0,
+			h: 0
+		};
+		
+		if ( elRatio < contRatio ) {
+			pos.w = contW;
+			pos.h = Math.round( pos.w / elRatio );
+			pos.y = Math.round( - ( pos.h - contH ) / 2 );
+		}
+		else {
+			pos.h = contH;
+			pos.w = Math.round ( pos.h * elRatio );
+			pos.x = Math.round ( - ( pos.w - contW ) / 2 );
+		}
+		
+		
+		return pos;
 	}
-	else {
-		pos.h = elH;
-		pos.w = Math.round ( pos.h * contRatio );
-		pos.x = Math.round ( - ( pos.w - elW ) / 2 );
+	
+	
+	getCropPos( elW, elH, contW, contH ) {
+		const elRatio	= elW / elH;
+		const contRatio	= contW / contH;
+		const pos		= {
+			x: 0,
+			y: 0,
+			w: 0,
+			h: 0
+		};
+		
+		if ( elRatio < contRatio ) {
+			pos.w = elW;
+			pos.h = Math.round( pos.w / contRatio );
+			pos.y = Math.round( - ( pos.h - elH ) / 2 );
+		}
+		else {
+			pos.h = elH;
+			pos.w = Math.round ( pos.h * contRatio );
+			pos.x = Math.round ( - ( pos.w - elW ) / 2 );
+		}
+		
+		
+		return pos;
 	}
 	
-	return pos;
-};
-
-
-Math_.degToRad = function( deg ) {
-	return deg * Math.PI / 180;
-};
-
-
-Math_.radToDeg = function( rad ) {
-	return rad * 180 / Math.PI;
-};
-
-
-Math_.getHypotenuse = function( widthA, widthB ) {
-	return Math.sqrt( widthA * widthA + widthB * widthB );
-};
-
-
-Math_.getInertia = function( destValue, value, inertia, hasMinStep ) {
-	var valueToAdd;
 	
-	if ( hasMinStep )
-		valueToAdd	= Math.abs ( ( destValue - value ) * inertia ) >= 0.01 ? ( destValue - value ) * inertia : destValue - value;
-	else
-		valueToAdd	= ( destValue - value ) * inertia;
-	
-	value			+= valueToAdd;
+	degToRad( deg ) {
+		return deg * Math.PI / 180;
+	}
 	
 	
-	return value;
-};
+	radToDeg( rad ) {
+		return rad * 180 / Math.PI;
+	}
+	
+	
+	getHypotenuse( widthA, widthB ) {
+		return Math.sqrt( widthA * widthA + widthB * widthB );
+	}
+	
+	
+	getInertia( destValue, value, inertia, hasMinStep = true, minStep = 0.01 ) {
+		const valueToAdd = !hasMinStep || hasMinStep && Math.abs ( ( destValue - value ) * inertia ) >= minStep ?
+							( destValue - value ) * inertia :
+							destValue - value;
+		value			+= valueToAdd;
+		
+		
+		return value;
+	}
+	
+	
+}
 
 
-module.exports = Math_;
+module.exports = new Math_();
 
 
 },{}],12:[function(require,module,exports){
