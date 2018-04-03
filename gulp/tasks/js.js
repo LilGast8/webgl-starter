@@ -59,9 +59,7 @@ function bundle( b ) {
 	return b.bundle()
 		// log errors if they happen
 		.on( 'error', function( error ) {
-			var file	= error.filename.substr( error.filename.indexOf( '/assets/' ) + 8 );
-			var msg		= 'JS error: ' + file + ' on line ' + error.loc.line + ', column ' + error.loc.column;
-			notify().write( msg );
+			notify().write( error.message );
 			console.log( gutil.colors.red( error.message ) );
 		} )
 		.pipe( source( 'scripts.js' ) )
