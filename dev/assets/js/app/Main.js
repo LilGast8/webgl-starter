@@ -1,33 +1,86 @@
 
 
-require( 'zepto' );
+require( 'greensock/TweenMax' );
 
-var MainView	= require( 'MainView' );
+const CustomEvent	= require( 'CustomEvent' );
+const Config		= require( 'Config' );
+const Screen		= require( 'controllers/Screen' );
+const Scroll		= require( 'controllers/Scroll' );
+const Mouse			= require( 'controllers/Mouse' );
+// const Touch			= require( 'controllers/Touch' );
+// const Orientation	= require( 'controllers/Orientation' );
+const DOM_			= require( 'utils/DOM' );
 
-var App			= require( 'App' );
 
-
-class Main {
+class Main extends CustomEvent {
 	
 	
 	constructor() {
+		super();
 		
+		this.E = {
+			RAF: 'raf'
+		};
 	}
 	
 	
 	init() {
-		MainView.init();
+		console.log( '🐣 Main.init()' );
 		
-		var app = new App();
-		app.init();
+		this.initDOM();
+		this.initEl();
+		this.bindEvents();
+	}
+	
+	
+	initDOM() {
+		this.$window	= $( window );
+		this.$html		= $( 'html' );
+		this.$body		= $( document.body );
+		this.$mainCont	= $( document.getElementById( 'main-container' ) );
+		this.$pageCont	= $( document.getElementById( 'page-container' ) );
+	}
+	
+	
+	initEl() {
+		// if ( Config.IS_DEV )
+		// 	FPSStats.init();
+		
+		Screen.init( this.$window, this.$body, this.$pageCont );
+		Scroll.init( this, this.$window );
+		Mouse.init( this, this.$window, Screen.cX, Screen.cY );
+		// Touch.init( this, this.$window, Screen.cX, Screen.cY );
+		// Orientation.init( this, this.$window );
+		
+		this.setClassWebGL();
+	}
+	
+	
+	bindEvents() {
+		TweenLite.ticker.addEventListener( 'tick', this.raf, this );
+	}
+	
+	
+	raf() {
+		// STF.Utils.Debug.DebugController.rafStart();
+		
+		
+		this.dispatch( this.E.RAF );
+		
+		
+		// STF.Utils.Debug.DebugController.rafEnd();
+	}
+	
+	
+	setClassWebGL() {
+		const webGL = Config.HAS_WEBGL === null ? null : Config.HAS_WEBGL ? 'webgl' : 'no-webgl';
+		if ( webGL )
+			DOM_.addClass( this.$html[0], webGL );
 	}
 	
 	
 };
 
 
-var main = new Main();
-
-
-$( main.init() );
+module.exports = new Main();
 

@@ -1,10 +1,9 @@
 
 
-// var DatGUI		= require( 'DatGUI' );
-var glslify			= require( 'glslify' );
+const glslify		= require( 'glslify' );
 
-var AbstractView	= require( 'abstracts/AbstractView' );
-var MainView		= require( 'MainView' );
+const AbstractView	= require( 'abstracts/AbstractView' );
+const Main			= require( 'Main' );
 
 
 class Sphere extends AbstractView {
@@ -13,7 +12,7 @@ class Sphere extends AbstractView {
 	constructor( webGLScene ) {
 		super();
 		
-		this.webGLScene = webGLScene;
+		this.webGLScene		= webGLScene;
 		
 		this.sphereUniforms	= {};
 		this.sphere			= null;
@@ -36,7 +35,7 @@ class Sphere extends AbstractView {
 	bindEvents() {
 		super.bindEvents();
 		
-		MainView.bind( MainView.E.RAF, this.raf, this );
+		Main.bind( Main.E.RAF, this.raf, this );
 	};
 	
 	
@@ -61,11 +60,11 @@ class Sphere extends AbstractView {
 	
 	
 	_initObject() {
-		var geometry	= new THREE.SphereBufferGeometry( 20, 32, 32 );
-		/*var material =  new THREE.MeshPhongMaterial( {
+		const geometry	= new THREE.SphereBufferGeometry( 20, 32, 32 );
+		/*const material =  new THREE.MeshPhongMaterial( {
 			color: 0xfe7373
 		} );*/
-		var material	= new THREE.ShaderMaterial( {
+		const material	= new THREE.ShaderMaterial( {
 			uniforms:		this.sphereUniforms,
 			vertexShader:	glslify( '../../3d/shaders/sphere.vert' ),
 			fragmentShader:	glslify( '../../3d/shaders/sphere.frag' ),

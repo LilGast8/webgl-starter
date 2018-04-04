@@ -1,9 +1,8 @@
 
 
-// var MainView	= require( 'MainView' );
-var WebGLScene	= require( 'WebGLScene' );
-var Lights		= require( 'Lights' );
-var Sphere		= require( 'Sphere' );
+const WebGLScene	= require( 'WebGLScene' );
+const Lights		= require( 'Lights' );
+const Sphere		= require( 'Sphere' );
 
 
 class App {
@@ -41,7 +40,7 @@ class App {
 	
 	
 	_initObjects() {
-		var sphere = new Sphere( this.webGLScene );
+		const sphere = new Sphere( this.webGLScene );
 		sphere.init();
 	};
 	

@@ -3,9 +3,10 @@
 global.THREE	= require( 'three.js/three.min' );
 require( 'three.js/OrbitControls' );
 
-var Config			= require( 'Config' );
-var AbstractView	= require( 'abstracts/AbstractView' );
-var MainView		= require( 'MainView' );
+const AbstractView	= require( 'abstracts/AbstractView' );
+const Config		= require( 'Config' );
+const Main			= require( 'Main' );
+const Screen		= require( 'controllers/Screen' );
 
 
 class WebGLScene extends AbstractView {
@@ -43,14 +44,14 @@ class WebGLScene extends AbstractView {
 	bindEvents() {
 		super.bindEvents();
 		
-		MainView.bind( MainView.E.RAF, this.raf, this );
+		Main.bind( Main.E.RAF, this.raf, this );
 	};
 	
 	
 	_initScene() {
 		this.scene		= new THREE.Scene();
 		
-		this.camera		= new THREE.PerspectiveCamera( 45, MainView.bW / MainView.wH, 0.1, 10000 );
+		this.camera		= new THREE.PerspectiveCamera( 45, Screen.bW / Screen.wH, 0.1, 10000 );
 		this.cameraTg	= new THREE.Vector3( 0, 0, 0 );
 		this.camera.lookAt( this.cameraTg );
 		this.camera.position.set( 0, 0, 100 );
@@ -58,16 +59,16 @@ class WebGLScene extends AbstractView {
 		this.renderer	= new THREE.WebGLRenderer( {
 			antialias: true
 		} );
-		this.renderer.setSize( MainView.bW, MainView.wH );
+		this.renderer.setSize( Screen.bW, Screen.wH );
 		this.$webGLCont[0].appendChild( this.renderer.domElement );
 	};
 	
 	
 	resize() {
-		this.camera.aspect = MainView.bW / MainView.wH;
+		this.camera.aspect = Screen.bW / Screen.wH;
 		this.camera.updateProjectionMatrix();
 		
-		this.renderer.setSize( MainView.bW, MainView.wH );
+		this.renderer.setSize( Screen.bW, Screen.wH );
 	};
 	
 	
@@ -86,9 +87,8 @@ class WebGLScene extends AbstractView {
 		if ( obj )
 			this.scene.remove( obj );
 		
-		var child;
-		for ( var i = 0; i < obj.children.length; i++ ) {
-			child = obj.children[ i ];
+		for ( let i = 0; i < obj.children.length; i++ ) {
+			const child = obj.children[ i ];
 			
 			this.disposeGeometry( child.geometry );
 			this.disposeMaterial( child.material );
@@ -116,17 +116,17 @@ class WebGLScene extends AbstractView {
 	
 	
 	_initHelpers() {
-		var cameraDebug = this.camera.clone();
+		const cameraDebug = this.camera.clone();
 		this.add( cameraDebug );
 		this.camera.far = 100000;
 		this.camera.updateProjectionMatrix();
 		
-		var controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
+		const controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
 		
-		var cameraHelper = new THREE.CameraHelper( cameraDebug );
+		const cameraHelper = new THREE.CameraHelper( cameraDebug );
 		this.add( cameraHelper );
 		
-		var axisHelper = new THREE.AxisHelper( 300 );
+		const axisHelper = new THREE.AxisHelper( 300 );
 		this.add( axisHelper );
 	};	
 	

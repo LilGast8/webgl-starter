@@ -1,10 +1,9 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 
 
-// var MainView	= require( 'MainView' );
-var WebGLScene	= require( 'WebGLScene' );
-var Lights		= require( 'Lights' );
-var Sphere		= require( 'Sphere' );
+const WebGLScene	= require( 'WebGLScene' );
+const Lights		= require( 'Lights' );
+const Sphere		= require( 'Sphere' );
 
 
 class App {
@@ -42,7 +41,7 @@ class App {
 	
 	
 	_initObjects() {
-		var sphere = new Sphere( this.webGLScene );
+		const sphere = new Sphere( this.webGLScene );
 		sphere.init();
 	};
 	
@@ -53,7 +52,10 @@ class App {
 module.exports = App;
 
 
-},{"Lights":4,"Sphere":7,"WebGLScene":8}],2:[function(require,module,exports){
+},{"Lights":5,"Sphere":7,"WebGLScene":8}],2:[function(require,module,exports){
+
+
+const Detector = require( 'three.js/Detector' );
 
 
 class Config {
@@ -67,6 +69,8 @@ class Config {
 		this.HAS_FPS_STATS	= true;
 		this.WEBGL_DEBUG	= true;
 		
+		this.HAS_WEBGL		= null;
+		
 		
 		this.init();
 	}
@@ -75,6 +79,8 @@ class Config {
 	init() {
 		this.IS_DEV		= this.ENV == 'dev';
 		this.IS_PROD	= this.ENV == 'prod';
+		
+		this.HAS_WEBGL	= Detector !== undefined ? Detector.webgl : null;
 	}
 	
 	
@@ -84,12 +90,12 @@ class Config {
 module.exports = new Config();
 
 
-},{}],3:[function(require,module,exports){
+},{"three.js/Detector":17}],3:[function(require,module,exports){
 
 
-var signals	= require( 'signals' );
+const signals	= require( 'signals' );
 
-var Config	= require( 'Config' );
+const Config	= require( 'Config' );
 
 
 class CustomEvent {
@@ -178,11 +184,44 @@ class CustomEvent {
 module.exports = CustomEvent;
 
 
-},{"Config":2,"signals":13}],4:[function(require,module,exports){
+},{"Config":2,"signals":16}],4:[function(require,module,exports){
 
 
-var AbstractView	= require( 'abstracts/AbstractView' );
-var MainView		= require( 'MainView' );
+require( 'zepto' );
+
+const Main	= require( 'Main' );
+const App	= require( 'App' );
+
+
+class InitApp {
+	
+	
+	constructor() {
+		
+	}
+	
+	
+	init() {
+		Main.init();
+		
+		const app = new App();
+		app.init();
+	}
+	
+	
+};
+
+
+const initApp = new InitApp();
+
+
+$( initApp.init() );
+
+
+},{"App":1,"Main":6,"zepto":20}],5:[function(require,module,exports){
+
+
+const AbstractView = require( 'abstracts/AbstractView' );
 
 
 class Lights extends AbstractView {
@@ -224,102 +263,40 @@ class Lights extends AbstractView {
 module.exports = Lights;
 
 
-},{"MainView":6,"abstracts/AbstractView":9}],5:[function(require,module,exports){
-
-
-require( 'zepto' );
-
-var MainView	= require( 'MainView' );
-
-var App			= require( 'App' );
-
-
-class Main {
-	
-	
-	constructor() {
-		
-	}
-	
-	
-	init() {
-		MainView.init();
-		
-		var app = new App();
-		app.init();
-	}
-	
-	
-};
-
-
-var main = new Main();
-
-
-$( main.init() );
-
-
-},{"App":1,"MainView":6,"zepto":17}],6:[function(require,module,exports){
+},{"abstracts/AbstractView":9}],6:[function(require,module,exports){
 
 
 require( 'greensock/TweenMax' );
 
-var CustomEvent		= require( 'CustomEvent' );
-var Config			= require( 'Config' );
-var FPSStats		= require( 'utils/FPSStats' );
-var Math_			= require( 'utils/Math' );
+const CustomEvent	= require( 'CustomEvent' );
+const Config		= require( 'Config' );
+const Screen		= require( 'controllers/Screen' );
+const Scroll		= require( 'controllers/Scroll' );
+const Mouse			= require( 'controllers/Mouse' );
+// const Touch			= require( 'controllers/Touch' );
+// const Orientation	= require( 'controllers/Orientation' );
+const DOM_			= require( 'utils/DOM' );
 
 
-class  MainView extends CustomEvent {
+class Main extends CustomEvent {
 	
 	
 	constructor() {
 		super();
 		
 		this.E = {
-			RESIZE:			'resize',
-			RAF:			'raf',
-			MOUSE_MOVE:		'mousemove',
-			MOUSE_DOWN:		'mousedown',
-			MOUSE_UP:		'mouseup',
-			TOUCH_MOVE:		'touchmove',
-			TOUCH_START:	'touchstart',
-			TOUCH_END:		'touchend',
-			WINDOW_OUT:		'windowout',
-			WINDOW_IN:		'windowin'
+			RAF: 'raf'
 		};
-		
-		this.bW		= null; // body width
-		this.bH		= null; // body height
-		this.wW		= null; // window width
-		this.wH		= null; // window height
-		this.cX		= null; // center X
-		this.cY		= null; // center Y
-		this.sY		= null; // scroll Y
-		this.siY	= null; // scroll inertia Y
-		this.mX		= null; // mouse X
-		this.mY		= null; // mouse Y
-		this.miX	= null; // mouse inertia X
-		this.miY	= null; // mouse inertia Y
-		this.tX		= null; // touch X
-		this.tY		= null; // touch Y
-		
-		this.SCROLL_INERTIA		= 0.09;
-		this.MOUSE_INERTIA		= 0.05;
-		
-		this.isWindowFocused	= true;
 	}
 	
 	
 	init() {
-		console.log( '🐣 MainView.init()' );
+		console.log( '🐣 Main.init()' );
 		
 		this.initDOM();
 		this.initEl();
 		this.bindEvents();
-		
-		this.resize();
-	};
+	}
 	
 	
 	initDOM() {
@@ -327,164 +304,60 @@ class  MainView extends CustomEvent {
 		this.$html		= $( 'html' );
 		this.$body		= $( document.body );
 		this.$mainCont	= $( document.getElementById( 'main-container' ) );
-	};
+		this.$pageCont	= $( document.getElementById( 'page-container' ) );
+	}
 	
 	
 	initEl() {
-		if ( Config.IS_DEV )
-			FPSStats.init();
-	};
+		// if ( Config.IS_DEV )
+		// 	FPSStats.init();
+		
+		Screen.init( this.$window, this.$body, this.$pageCont );
+		Scroll.init( this, this.$window );
+		Mouse.init( this, this.$window, Screen.cX, Screen.cY );
+		// Touch.init( this, this.$window, Screen.cX, Screen.cY );
+		// Orientation.init( this, this.$window );
+		
+		this.setClassWebGL();
+	}
 	
 	
 	bindEvents() {
-		this.$window.on( 'resize', $.proxy( this.resize, this ) );
 		TweenLite.ticker.addEventListener( 'tick', this.raf, this );
-		this.$window.on( 'mousemove', $.proxy( this.mouseMove, this ) );
-		// this.$window.on( 'mousedown', $.proxy( this.mouseDown, this ) );
-		// this.$window.on( 'mouseup', $.proxy( this.mouseUp, this ) );
-		// this.$window.on( 'touchmove', $.proxy( this.touchMove, this ) );
-		// this.$window.on( 'touchstart', $.proxy( this.touchStart, this ) );
-		// this.$window.on( 'touchend', $.proxy( this.touchEnd, this ) );
-		// this.$window.on( 'blur', $.proxy( this.windowOut, this ) );
-		// this.$window.on( 'focus', $.proxy( this.windowIn, this ) );
-	};
-	
-	
-	resize() {
-		this._setResizeProps();
-		
-		this.dispatch( this.E.RESIZE );
-	};
-	
-	
-	_setResizeProps() {
-		this.bW = this.$body.width();
-		this.bH = this.$body.height();
-		this.wW = this.$window.width();
-		this.wH = this.$window.height();
-		this.cX = Math.round( this.bW / 2 );
-		this.cY = Math.round( this.wH / 2 );
-		
-		if ( this.mX === null && this.mY === null ) {
-			this.mX = this.cX;
-			this.mY = this.cY;
-		}
-	};
+	}
 	
 	
 	raf() {
-		if ( Config.IS_DEV )
-			FPSStats.begin();
+		// STF.Utils.Debug.DebugController.rafStart();
 		
-		
-		this._setRafProps();
 		
 		this.dispatch( this.E.RAF );
 		
 		
-		if ( Config.IS_DEV )
-			FPSStats.end();
-	};
+		// STF.Utils.Debug.DebugController.rafEnd();
+	}
 	
 	
-	_setRafProps() {
-		this.sY		= this.$window[0].scrollY || this.$window[0].pageYOffset;
-		this.siY	= Math_.getInertia( this.sY, this.siY, this.SCROLL_INERTIA, true );
-		
-		this.miX	= Math_.getInertia( this.mX, this.miX, this.MOUSE_INERTIA, true );
-		this.miY	= Math_.getInertia( this.mY, this.miY, this.MOUSE_INERTIA, true );
-	};
+	setClassWebGL() {
+		const webGL = Config.HAS_WEBGL === null ? null : Config.HAS_WEBGL ? 'webgl' : 'no-webgl';
+		if ( webGL )
+			DOM_.addClass( this.$html[0], webGL );
+	}
 	
 	
-	mouseMove( e ) {
-		this.mX = e.clientX;
-		this.mY = e.clientY;
-		
-		// console.log( 'MainView _mouseMove()', this.mX, this.mY );
-		
-		this.dispatch( this.E.MOUSE_MOVE );
-	};
-	
-	
-	mouseDown() {
-		this.dispatch( this.E.MOUSE_DOWN );
-	};
-	
-	
-	mouseUp() {
-		this.dispatch( this.E.MOUSE_UP );
-	};
-	
-	
-	touchMove( e ) {
-		e.preventDefault();
-		
-		// Zepto
-		this.tX = e.touches[0].pageX;
-		this.tY = e.touches[0].pageY;
-		// jQuery
-		// this.tX = e.originalEvent.touches[0].pageX;
-		// this.tY = e.originalEvent.touches[0].pageY;
-		
-		this.dispatch( this.E.TOUCH_MOVE );
-	};
-	
-	
-	touchStart() {
-		this.dispatch( this.E.TOUCH_START );
-	};
-	
-	
-	touchEnd() {
-		this.dispatch( this.E.TOUCH_END );
-	};
-	
-	
-	windowOut() {
-		this.isWindowFocused = false;
-		
-		this.dispatch( this.E.WINDOW_OUT );
-	};
-	
-	
-	windowIn() {
-		this.isWindowFocused = true;
-		
-		this.dispatch( this.E.WINDOW_IN );
-	};
-	
-	
-	setScrollY( scrollY ) {
-		this.sY		= scrollY;
-		this.siY	= scrollY;
-		
-		this.$window[0].scrollTo( 0, scrollY );
-	};
-	
-	
-	setBodyHeight( bodyH ) {
-		if ( bodyH === null )
-			bodyH = this.$pageCont.height();
-		
-		this.bH						= bodyH;
-		this.$body[0].style.height	= this.bH + 'px';
-	};
-	
-	
-}
+};
 
 
-module.exports = new MainView();
+module.exports = new Main();
 
 
-},{"Config":2,"CustomEvent":3,"greensock/TweenMax":12,"utils/FPSStats":10,"utils/Math":11}],7:[function(require,module,exports){
+},{"Config":2,"CustomEvent":3,"controllers/Mouse":10,"controllers/Screen":11,"controllers/Scroll":12,"greensock/TweenMax":15,"utils/DOM":13}],7:[function(require,module,exports){
 
 
-// var DatGUI		= require( 'DatGUI' );
-var glslify			= require( 'glslify' );
+const glslify		= require( 'glslify' );
 
-var AbstractView	= require( 'abstracts/AbstractView' );
-var MainView		= require( 'MainView' );
+const AbstractView	= require( 'abstracts/AbstractView' );
+const Main			= require( 'Main' );
 
 
 class Sphere extends AbstractView {
@@ -493,7 +366,7 @@ class Sphere extends AbstractView {
 	constructor( webGLScene ) {
 		super();
 		
-		this.webGLScene = webGLScene;
+		this.webGLScene		= webGLScene;
 		
 		this.sphereUniforms	= {};
 		this.sphere			= null;
@@ -516,7 +389,7 @@ class Sphere extends AbstractView {
 	bindEvents() {
 		super.bindEvents();
 		
-		MainView.bind( MainView.E.RAF, this.raf, this );
+		Main.bind( Main.E.RAF, this.raf, this );
 	};
 	
 	
@@ -541,11 +414,11 @@ class Sphere extends AbstractView {
 	
 	
 	_initObject() {
-		var geometry	= new THREE.SphereBufferGeometry( 20, 32, 32 );
-		/*var material =  new THREE.MeshPhongMaterial( {
+		const geometry	= new THREE.SphereBufferGeometry( 20, 32, 32 );
+		/*const material =  new THREE.MeshPhongMaterial( {
 			color: 0xfe7373
 		} );*/
-		var material	= new THREE.ShaderMaterial( {
+		const material	= new THREE.ShaderMaterial( {
 			uniforms:		this.sphereUniforms,
 			vertexShader:	glslify(["#define GLSLIFY 1\n\nvoid main() {\n\t\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n\t\n}\n\n"]),
 			fragmentShader:	glslify(["#define GLSLIFY 1\n\nvoid main() {\n\t\n\tgl_FragColor = vec4( 1.0, 0.0, 0.5, 1.0 );\n\t\n}\n"]),
@@ -567,16 +440,17 @@ class Sphere extends AbstractView {
 module.exports = Sphere;
 
 
-},{"MainView":6,"abstracts/AbstractView":9,"glslify":18}],8:[function(require,module,exports){
+},{"Main":6,"abstracts/AbstractView":9,"glslify":21}],8:[function(require,module,exports){
 (function (global){
 
 
 global.THREE	= require( 'three.js/three.min' );
 require( 'three.js/OrbitControls' );
 
-var Config			= require( 'Config' );
-var AbstractView	= require( 'abstracts/AbstractView' );
-var MainView		= require( 'MainView' );
+const AbstractView	= require( 'abstracts/AbstractView' );
+const Config		= require( 'Config' );
+const Main			= require( 'Main' );
+const Screen		= require( 'controllers/Screen' );
 
 
 class WebGLScene extends AbstractView {
@@ -614,14 +488,14 @@ class WebGLScene extends AbstractView {
 	bindEvents() {
 		super.bindEvents();
 		
-		MainView.bind( MainView.E.RAF, this.raf, this );
+		Main.bind( Main.E.RAF, this.raf, this );
 	};
 	
 	
 	_initScene() {
 		this.scene		= new THREE.Scene();
 		
-		this.camera		= new THREE.PerspectiveCamera( 45, MainView.bW / MainView.wH, 0.1, 10000 );
+		this.camera		= new THREE.PerspectiveCamera( 45, Screen.bW / Screen.wH, 0.1, 10000 );
 		this.cameraTg	= new THREE.Vector3( 0, 0, 0 );
 		this.camera.lookAt( this.cameraTg );
 		this.camera.position.set( 0, 0, 100 );
@@ -629,16 +503,16 @@ class WebGLScene extends AbstractView {
 		this.renderer	= new THREE.WebGLRenderer( {
 			antialias: true
 		} );
-		this.renderer.setSize( MainView.bW, MainView.wH );
+		this.renderer.setSize( Screen.bW, Screen.wH );
 		this.$webGLCont[0].appendChild( this.renderer.domElement );
 	};
 	
 	
 	resize() {
-		this.camera.aspect = MainView.bW / MainView.wH;
+		this.camera.aspect = Screen.bW / Screen.wH;
 		this.camera.updateProjectionMatrix();
 		
-		this.renderer.setSize( MainView.bW, MainView.wH );
+		this.renderer.setSize( Screen.bW, Screen.wH );
 	};
 	
 	
@@ -657,9 +531,8 @@ class WebGLScene extends AbstractView {
 		if ( obj )
 			this.scene.remove( obj );
 		
-		var child;
-		for ( var i = 0; i < obj.children.length; i++ ) {
-			child = obj.children[ i ];
+		for ( let i = 0; i < obj.children.length; i++ ) {
+			const child = obj.children[ i ];
 			
 			this.disposeGeometry( child.geometry );
 			this.disposeMaterial( child.material );
@@ -687,17 +560,17 @@ class WebGLScene extends AbstractView {
 	
 	
 	_initHelpers() {
-		var cameraDebug = this.camera.clone();
+		const cameraDebug = this.camera.clone();
 		this.add( cameraDebug );
 		this.camera.far = 100000;
 		this.camera.updateProjectionMatrix();
 		
-		var controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
+		const controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
 		
-		var cameraHelper = new THREE.CameraHelper( cameraDebug );
+		const cameraHelper = new THREE.CameraHelper( cameraDebug );
 		this.add( cameraHelper );
 		
-		var axisHelper = new THREE.AxisHelper( 300 );
+		const axisHelper = new THREE.AxisHelper( 300 );
 		this.add( axisHelper );
 	};	
 	
@@ -710,11 +583,11 @@ module.exports = WebGLScene;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"Config":2,"MainView":6,"abstracts/AbstractView":9,"three.js/OrbitControls":15,"three.js/three.min":16}],9:[function(require,module,exports){
+},{"Config":2,"Main":6,"abstracts/AbstractView":9,"controllers/Screen":11,"three.js/OrbitControls":18,"three.js/three.min":19}],9:[function(require,module,exports){
 
 
-var CustomEvent	= require( 'CustomEvent' );
-var MainView	= require( 'MainView' );
+const CustomEvent	= require( 'CustomEvent' );
+const Screen		= require( 'controllers/Screen' );
 
 
 class AbstractView extends CustomEvent {
@@ -763,16 +636,16 @@ class AbstractView extends CustomEvent {
 	
 	
 	bindEvents() {
-		// console.log( 'AbstractView.bindEvents() — ', this.constructor.name );
+		console.log( 'AbstractView.bindEvents() — ', this.constructor.name );
 		
-		MainView.bind( MainView.E.RESIZE, this.resize, this );
+		Screen.bind( Screen.E.RESIZE, this.resize, this );
 	};
 	
 	
 	unbindEvents() {
 		// console.log( 'AbstractView.unbindEvents() — ', this.constructor.name );
 		
-		MainView.unbind( MainView.E.RESIZE, this.resize, this );
+		Screen.unbind( Screen.E.RESIZE, this.resize, this );
 	};
 	
 	
@@ -814,11 +687,11 @@ class AbstractView extends CustomEvent {
 	
 	destroyGSAP() {
 		/* tween */
-		for ( var tween in this.tw )
+		for ( const tween in this.tw )
 			this.killTween( tween );
 		
 		/* timeline */
-		for ( var timeline in this.tl )
+		for ( const timeline in this.tl )
 			this.killTimeline( timeline );
 		
 		this.tl = {};
@@ -854,47 +727,358 @@ class AbstractView extends CustomEvent {
 module.exports = AbstractView;
 
 
-},{"CustomEvent":3,"MainView":6}],10:[function(require,module,exports){
-'use strict';
+},{"CustomEvent":3,"controllers/Screen":11}],10:[function(require,module,exports){
 
 
-var Stats = require( 'stats.min' );
+const CustomEvent	= require( 'CustomEvent' );
+const Math_			= require( 'utils/Math' );
 
 
-function FPSStats() {
-	this.stats = null;
+class Mouse extends CustomEvent {
+	
+	
+	constructor() {
+		super();
+		
+		this.E = {
+			MOUSE_MOVE:	'mousemove',
+			MOUSE_DOWN:	'mousedown',
+			MOUSE_UP:	'mouseup'
+		};
+		
+		this.x	= null; // mouse X
+		this.y	= null; // mouse Y
+		this.xI	= null; // mouse X with inertia
+		this.yI	= null; // mouse Y with inertia
+		
+		this.MOUSE_INERTIA = 0.03;
+	}
+	
+	
+	init( Main, $window = $( window ), startX = Math.round( $window.width() / 2 ), startY = Math.round( $window.height() / 2 ) ) {
+		this._initDOM( $window );
+		this._initEl( startX, startY );
+		this._bindEvents( Main );
+	}
+	
+	
+	_initDOM( $window ) {
+		this.$window = $window;
+	}
+	
+	
+	_initEl( startX, startY ) {
+		this.setPosition( startX, startY );
+	}
+	
+	
+	_bindEvents( Main ) {
+		Main.bind( Main.E.RAF, this._raf, this );
+		
+		this.$window.on( 'mousemove', $.proxy( this._mouseMove, this ) );
+		this.$window.on( 'mousedown', $.proxy( this._mouseDown, this ) );
+		this.$window.on( 'mouseup', $.proxy( this._mouseUp, this ) );
+	}
+	
+	
+	_raf() {
+		if ( this.x === null && this.y === null ) {
+			this.x = this.cX;
+			this.y = this.cY;
+		}
+		
+		this.xI = Math_.getInertia( this.x, this.xI, this.MOUSE_INERTIA );
+		this.yI = Math_.getInertia( this.y, this.yI, this.MOUSE_INERTIA );
+		
+		// console.log( `🐹 x: ${ this.x } / y: ${ this.y }` );
+		// console.log( `🐹 xI: ${ this.xI } / yI: ${ this.yI }` );
+	}
+	
+	
+	_mouseMove( e ) {
+		this.x = e.clientX;
+		this.y = e.clientY;
+		
+		// console.log( `🐹 Mouse._mouseMove() x: ${ this.x } / y: ${ this.y }` );
+		
+		this.dispatch( this.E.MOUSE_MOVE );
+	}
+	
+	
+	_mouseDown() {
+		this.dispatch( this.E.MOUSE_DOWN );
+	}
+	
+	
+	_mouseUp() {
+		this.dispatch( this.E.MOUSE_UP );
+	}
+	
+	
+	setPosition( x, y ) {
+		this.x	= x;
+		this.y	= y;
+		this.xI	= x;
+		this.yI	= y;
+	}
+	
+	
+};
+
+
+module.exports = new Mouse();
+
+
+},{"CustomEvent":3,"utils/Math":14}],11:[function(require,module,exports){
+
+
+const CustomEvent = require( 'CustomEvent' );
+
+
+class Screen extends CustomEvent {
+	
+	
+	constructor() {
+		super();
+		
+		this.E = {
+			RESIZE:		'resize',
+			WINDOW_OUT:	'windowout',
+			WINDOW_IN:	'windowin'
+		};
+		
+		this.wW	= null; // window width
+		this.wH	= null; // window height
+		this.bW	= null; // body width
+		this.bH	= null; // body height
+		this.cX	= null; // center X
+		this.cY	= null; // center Y
+		
+		this.isWindowFocused = true;
+	}
+	
+	
+	init( $window = $( window ), $body = $( document.body ), $pageCont = $body ) {
+		this._initDOM( $window, $body, $pageCont );
+		this._initEl();
+		this._bindEvents();
+		
+		this._resize();
+	}
+	
+	
+	_initDOM( $window, $body, $pageCont ) {
+		this.$window	= $window;
+		this.$body		= $body;
+		this.$pageCont	= $pageCont;
+	}
+	
+	
+	_initEl() {
+		
+	}
+	
+	
+	_bindEvents() {
+		this.$window.on( 'resize', $.proxy( this._resize, this ) );
+		// this.$window.on( 'blur', $.proxy( this._windowOut, this ) );
+		// this.$window.on( 'focus', $.proxy( this._windowIn, this ) );
+	}
+	
+	
+	_resize() {
+		this._setResizeProps();
+		
+		this.dispatch( this.E.RESIZE );
+	}
+	
+	
+	_setResizeProps() {
+		this.wW = this.$window.width();
+		this.wH = this.$window.height();
+		this.bW = this.$body.width();
+		this.bH = this.$body.height();
+		this.cX = Math.round( this.bW / 2 );
+		this.cY = Math.round( this.wH / 2 );
+	}
+	
+	
+	_windowOut() {
+		this.isWindowFocused = false;
+		
+		this.dispatch( this.E.WINDOW_OUT );
+	}
+	
+	
+	_windowIn() {
+		this.isWindowFocused = true;
+		
+		this.dispatch( this.E.WINDOW_IN );
+	}
+	
+	
+	setBodyHeight( bodyH ) {
+		if ( bodyH === null )
+			bodyH = this.$pageCont.height();
+		
+		this.bH						= bodyH;
+		this.$body[0].style.height	= bodyH + 'px';
+	}
+	
+	
+};
+
+
+module.exports = new Screen();
+
+
+},{"CustomEvent":3}],12:[function(require,module,exports){
+
+
+const CustomEvent	= require( 'CustomEvent' );
+const Math_			= require( 'utils/Math' );
+
+
+class Scroll extends CustomEvent {
+	
+	
+	constructor() {
+		super();
+		
+		this.y	= null; // scroll Y
+		this.yI	= null; // scroll Y with inertia
+		
+		this.SCROLL_INERTIA = 0.09;
+	}
+	
+	
+	init( Main, $window = $( window ) ) {
+		this._initDOM( $window );
+		this._initEl();
+		this._bindEvents( Main );
+	}
+	
+	
+	_initDOM( $window ) {
+		this.$window = $window;
+	}
+	
+	
+	_initEl() {
+		
+	}
+	
+	
+	_bindEvents( Main ) {
+		Main.bind( Main.E.RAF, this._raf, this );
+	}
+	
+	
+	disableScrollRestoration() {
+		if ( 'scrollRestoration' in history )
+			history.scrollRestoration = 'manual';
+	}
+	
+	
+	_raf() {
+		this.y	= this.$window[0].scrollY || this.$window[0].pageYOffset;
+		// this.yI	= STF_math_getInertia( this.y, this.yI, this.SCROLL_INERTIA );
+		this.yI	= Math_.getInertia( this.y, this.yI, this.SCROLL_INERTIA );
+		
+		// console.log( `🎡 y: ${ this.y }` );
+		// console.log( `🎡 yI: ${ this.yI }` );
+	}
+	
+	
+	setScrollY( scrollY ) {
+		this.y	= scrollY;
+		this.yI	= scrollY;
+		
+		this.$window[0].scrollTo( 0, scrollY );
+	}
+	
+	
+};
+
+
+module.exports = new Scroll();
+
+
+},{"CustomEvent":3,"utils/Math":14}],13:[function(require,module,exports){
+
+
+class DOM_ {
+	
+	
+	constructor() {
+		
+	}
+	
+	
+	addClass( el, classToAdd ) {
+		if ( el.classList )
+			el.classList.add( classToAdd );
+		else {
+			if ( !STF_dom_hasClass( el, classToAdd ) )
+				el.className += ' ' + classToAdd;
+		}
+	}
+	
+	
+	removeClass( el, classToRemove ) {
+		if ( el.classList )
+			el.classList.remove( classToRemove );
+		else {
+			el.className = el.className.replace( new RegExp( '(^|\\b)' + classToRemove.split(' ').join( '|' ) + '(\\b|$)', 'gi' ), '');
+			
+			const lastCharPos = el.className.length - 1;
+			if ( el.className[ lastCharPos ] == ' ' )
+				el.className = el.className.substring( 0, lastCharPos );
+		}
+	}
+	
+	
+	resetClass( el ) {
+		el.className = '';
+	}
+	
+	
+	hasClass( el, classToCheck ) {
+		let hasClass;
+		
+		if ( el.classList )
+			hasClass = el.classList.contains( classToCheck );
+		else
+			hasClass = new RegExp( '(^| )' + classToCheck + '( |$)', 'gi' ).test( el.className );
+		
+		
+		return hasClass;
+	}
+	
+	
+	resetStyle( el ) {
+		el.style.cssText = '';
+	}
+	
+	
+	setTranslate( el, x, y ) {
+		x = x === null ? 0 : x;
+		y = y === null ? 0 : y;
+		
+		if ( STF.Configs.Props.HAS_TRANSFORMS_3D )
+			el.style[ STF.Configs.Props.TRANSFORM ] = 'translate3d(' + x + 'px, ' + y + 'px, 0px)';
+		else
+			el.style[ STF.Configs.Props.TRANSFORM ] = 'translate(' + x + 'px, ' + y + 'px)';
+	}
+	
+	
 }
 
 
-FPSStats.prototype.init = function() {
-	this.stats = new Stats();
-	
-	this.stats.setMode( 0 );
-	
-	this.stats.dom.style.top		= '0px';
-	this.stats.dom.style.left		= '0px';
-	this.stats.dom.style.bottom		= 'auto';
-	this.stats.dom.style.right		= 'auto';
-	this.stats.dom.style.zIndex		= 88;
-	
-	document.body.appendChild( this.stats.dom );
-};
+module.exports = new DOM_();
 
 
-FPSStats.prototype.begin = function() {
-	this.stats.begin();
-};
-
-
-FPSStats.prototype.end = function() {
-	this.stats.end();
-};
-
-
-module.exports = new FPSStats();
-
-
-},{"stats.min":14}],11:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 
 
 class Math_ {
@@ -989,7 +1173,7 @@ class Math_ {
 module.exports = new Math_();
 
 
-},{}],12:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 (function (global){
 /*!
  * VERSION: 1.20.3
@@ -8955,7 +9139,7 @@ if (_gsScope._gsDefine) { _gsScope._gsQueue.pop()(); } //necessary in case Tween
 })((typeof(module) !== "undefined" && module.exports && typeof(global) !== "undefined") ? global : this || window, "TweenMax");
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],13:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /*jslint onevar:true, undef:true, newcap:true, regexp:true, bitwise:true, maxerr:50, indent:4, white:false, nomen:false, plusplus:false */
 /*global define:false, require:false, exports:false, module:false, signals:false */
 
@@ -9402,14 +9586,87 @@ if (_gsScope._gsDefine) { _gsScope._gsQueue.pop()(); } //necessary in case Tween
 
 }(this));
 
-},{}],14:[function(require,module,exports){
-// stats.js - http://github.com/mrdoob/stats.js
-(function(f,e){"object"===typeof exports&&"undefined"!==typeof module?module.exports=e():"function"===typeof define&&define.amd?define(e):f.Stats=e()})(this,function(){var f=function(){function e(a){c.appendChild(a.dom);return a}function u(a){for(var d=0;d<c.children.length;d++)c.children[d].style.display=d===a?"block":"none";l=a}var l=0,c=document.createElement("div");c.style.cssText="position:fixed;top:0;left:0;cursor:pointer;opacity:0.9;z-index:10000";c.addEventListener("click",function(a){a.preventDefault();
-u(++l%c.children.length)},!1);var k=(performance||Date).now(),g=k,a=0,r=e(new f.Panel("FPS","#0ff","#002")),h=e(new f.Panel("MS","#0f0","#020"));if(self.performance&&self.performance.memory)var t=e(new f.Panel("MB","#f08","#201"));u(0);return{REVISION:16,dom:c,addPanel:e,showPanel:u,begin:function(){k=(performance||Date).now()},end:function(){a++;var c=(performance||Date).now();h.update(c-k,200);if(c>g+1E3&&(r.update(1E3*a/(c-g),100),g=c,a=0,t)){var d=performance.memory;t.update(d.usedJSHeapSize/
-1048576,d.jsHeapSizeLimit/1048576)}return c},update:function(){k=this.end()},domElement:c,setMode:u}};f.Panel=function(e,f,l){var c=Infinity,k=0,g=Math.round,a=g(window.devicePixelRatio||1),r=80*a,h=48*a,t=3*a,v=2*a,d=3*a,m=15*a,n=74*a,p=30*a,q=document.createElement("canvas");q.width=r;q.height=h;q.style.cssText="width:80px;height:48px";var b=q.getContext("2d");b.font="bold "+9*a+"px Helvetica,Arial,sans-serif";b.textBaseline="top";b.fillStyle=l;b.fillRect(0,0,r,h);b.fillStyle=f;b.fillText(e,t,v);
-b.fillRect(d,m,n,p);b.fillStyle=l;b.globalAlpha=.9;b.fillRect(d,m,n,p);return{dom:q,update:function(h,w){c=Math.min(c,h);k=Math.max(k,h);b.fillStyle=l;b.globalAlpha=1;b.fillRect(0,0,r,m);b.fillStyle=f;b.fillText(g(h)+" "+e+" ("+g(c)+"-"+g(k)+")",t,v);b.drawImage(q,d+a,m,n-a,p,d,m,n-a,p);b.fillRect(d+n-a,m,a,p);b.fillStyle=l;b.globalAlpha=.9;b.fillRect(d+n-a,m,a,g((1-h/w)*p))}}};return f});
+},{}],17:[function(require,module,exports){
+/**
+ * @author alteredq / http://alteredqualia.com/
+ * @author mr.doob / http://mrdoob.com/
+ */
 
-},{}],15:[function(require,module,exports){
+var Detector = {
+
+	canvas: !! window.CanvasRenderingContext2D,
+	webgl: ( function () {
+
+		try {
+
+			var canvas = document.createElement( 'canvas' ); return !! ( window.WebGLRenderingContext && ( canvas.getContext( 'webgl' ) || canvas.getContext( 'experimental-webgl' ) ) );
+
+		} catch ( e ) {
+
+			return false;
+
+		}
+
+	} )(),
+	workers: !! window.Worker,
+	fileapi: window.File && window.FileReader && window.FileList && window.Blob,
+
+	getWebGLErrorMessage: function () {
+
+		var element = document.createElement( 'div' );
+		element.id = 'webgl-error-message';
+		element.style.fontFamily = 'monospace';
+		element.style.fontSize = '13px';
+		element.style.fontWeight = 'normal';
+		element.style.textAlign = 'center';
+		element.style.background = '#fff';
+		element.style.color = '#000';
+		element.style.padding = '1.5em';
+		element.style.width = '400px';
+		element.style.margin = '5em auto 0';
+
+		if ( ! this.webgl ) {
+
+			element.innerHTML = window.WebGLRenderingContext ? [
+				'Your graphics card does not seem to support <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation" style="color:#000">WebGL</a>.<br />',
+				'Find out how to get it <a href="http://get.webgl.org/" style="color:#000">here</a>.'
+			].join( '\n' ) : [
+				'Your browser does not seem to support <a href="http://khronos.org/webgl/wiki/Getting_a_WebGL_Implementation" style="color:#000">WebGL</a>.<br/>',
+				'Find out how to get it <a href="http://get.webgl.org/" style="color:#000">here</a>.'
+			].join( '\n' );
+
+		}
+
+		return element;
+
+	},
+
+	addGetWebGLMessage: function ( parameters ) {
+
+		var parent, id, element;
+
+		parameters = parameters || {};
+
+		parent = parameters.parent !== undefined ? parameters.parent : document.body;
+		id = parameters.id !== undefined ? parameters.id : 'oldie';
+
+		element = Detector.getWebGLErrorMessage();
+		element.id = id;
+
+		parent.appendChild( element );
+
+	}
+
+};
+
+// browserify support
+if ( typeof module === 'object' ) {
+
+	module.exports = Detector;
+
+}
+
+},{}],18:[function(require,module,exports){
 /**
  * @author qiao / https://github.com/qiao
  * @author mrdoob / http://mrdoob.com
@@ -10454,7 +10711,7 @@ Object.defineProperties( THREE.OrbitControls.prototype, {
 
 } );
 
-},{}],16:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 // threejs.org/license
 (function(k,xa){"object"===typeof exports&&"undefined"!==typeof module?xa(exports):"function"===typeof define&&define.amd?define(["exports"],xa):xa(k.THREE={})})(this,function(k){function xa(){}function C(a,b){this.x=a||0;this.y=b||0}function Q(){this.elements=[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1];0<arguments.length&&console.error("THREE.Matrix4: the constructor no longer reads arguments. use .set() instead.")}function ca(a,b,c,d){this._x=a||0;this._y=b||0;this._z=c||0;this._w=void 0!==d?d:1}function p(a,
 b,c){this.x=a||0;this.y=b||0;this.z=c||0}function ta(){this.elements=[1,0,0,0,1,0,0,0,1];0<arguments.length&&console.error("THREE.Matrix3: the constructor no longer reads arguments. use .set() instead.")}function aa(a,b,c,d,e,f,g,h,l,m){Object.defineProperty(this,"id",{value:xf++});this.uuid=S.generateUUID();this.name="";this.image=void 0!==a?a:aa.DEFAULT_IMAGE;this.mipmaps=[];this.mapping=void 0!==b?b:aa.DEFAULT_MAPPING;this.wrapS=void 0!==c?c:1001;this.wrapT=void 0!==d?d:1001;this.magFilter=void 0!==
@@ -11367,7 +11624,7 @@ a.project(b)};this.unprojectVector=function(a,b){console.warn("THREE.Projector: 
 this.setClearColor=function(){};this.setSize=function(){}};k.SceneUtils={createMultiMaterialObject:function(){console.error("THREE.SceneUtils has been moved to /examples/js/utils/SceneUtils.js")},detach:function(){console.error("THREE.SceneUtils has been moved to /examples/js/utils/SceneUtils.js")},attach:function(){console.error("THREE.SceneUtils has been moved to /examples/js/utils/SceneUtils.js")}};k.LensFlare=function(){console.error("THREE.LensFlare has been moved to /examples/js/objects/LensFlare.js")};
 Object.defineProperty(k,"__esModule",{value:!0})});
 
-},{}],17:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 (function (global){
 ; var __browserify_shim_require__=require;(function browserifyShim(module, exports, require, define, browserify_shim__define__module__export__) {
 /* Zepto v1.2.0 - zepto event ajax form ie - zeptojs.com/license */
@@ -11378,7 +11635,7 @@ Object.defineProperty(k,"__esModule",{value:!0})});
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],18:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 module.exports = function(strings) {
   if (typeof strings === 'string') strings = [strings]
   var exprs = [].slice.call(arguments,1)
@@ -11390,6 +11647,6 @@ module.exports = function(strings) {
   return parts.join('')
 }
 
-},{}]},{},[5])
+},{}]},{},[4])
 
 //# sourceMappingURL=maps/scripts.js.map

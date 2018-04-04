@@ -1,8 +1,8 @@
 
 
-var signals	= require( 'signals' );
+const signals	= require( 'signals' );
 
-var Config	= require( 'Config' );
+const Config	= require( 'Config' );
 
 
 class CustomEvent {

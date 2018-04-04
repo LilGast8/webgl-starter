@@ -1,7 +1,6 @@
 
 
-var AbstractView	= require( 'abstracts/AbstractView' );
-var MainView		= require( 'MainView' );
+const AbstractView = require( 'abstracts/AbstractView' );
 
 
 class Lights extends AbstractView {

@@ -1,5 +1,8 @@
 
 
+const Detector = require( 'three.js/Detector' );
+
+
 class Config {
 	
 	
@@ -11,6 +14,8 @@ class Config {
 		this.HAS_FPS_STATS	= true;
 		this.WEBGL_DEBUG	= true;
 		
+		this.HAS_WEBGL		= null;
+		
 		
 		this.init();
 	}
@@ -19,6 +24,8 @@ class Config {
 	init() {
 		this.IS_DEV		= this.ENV == 'dev';
 		this.IS_PROD	= this.ENV == 'prod';
+		
+		this.HAS_WEBGL	= Detector !== undefined ? Detector.webgl : null;
 	}
 	
 	

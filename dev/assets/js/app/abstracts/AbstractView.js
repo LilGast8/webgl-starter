@@ -1,7 +1,7 @@
 
 
-var CustomEvent	= require( 'CustomEvent' );
-var MainView	= require( 'MainView' );
+const CustomEvent	= require( 'CustomEvent' );
+const Screen		= require( 'controllers/Screen' );
 
 
 class AbstractView extends CustomEvent {
@@ -50,16 +50,16 @@ class AbstractView extends CustomEvent {
 	
 	
 	bindEvents() {
-		// console.log( 'AbstractView.bindEvents() — ', this.constructor.name );
+		console.log( 'AbstractView.bindEvents() — ', this.constructor.name );
 		
-		MainView.bind( MainView.E.RESIZE, this.resize, this );
+		Screen.bind( Screen.E.RESIZE, this.resize, this );
 	};
 	
 	
 	unbindEvents() {
 		// console.log( 'AbstractView.unbindEvents() — ', this.constructor.name );
 		
-		MainView.unbind( MainView.E.RESIZE, this.resize, this );
+		Screen.unbind( Screen.E.RESIZE, this.resize, this );
 	};
 	
 	
@@ -101,11 +101,11 @@ class AbstractView extends CustomEvent {
 	
 	destroyGSAP() {
 		/* tween */
-		for ( var tween in this.tw )
+		for ( const tween in this.tw )
 			this.killTween( tween );
 		
 		/* timeline */
-		for ( var timeline in this.tl )
+		for ( const timeline in this.tl )
 			this.killTimeline( timeline );
 		
 		this.tl = {};

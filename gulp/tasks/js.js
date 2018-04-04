@@ -26,7 +26,7 @@ gulp.task( 'js', function() {
 		// cache:			{},
 		// packageCache:	{},
 		// fullPaths:		true,
-		entries: 		[ paths.env.dev + paths.assets.js.app.dir + 'Main.js' ],
+		entries: 		[ paths.env.dev + paths.assets.js.app.dir + 'InitApp.js' ],
 		paths:			[
 							paths.env.dev + paths.assets.js.app.dir,
 							paths.env.dev + paths.assets.js.vendor.dir
