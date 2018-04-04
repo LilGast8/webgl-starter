@@ -1,9 +1,9 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 
 
-const WebGLScene	= require( 'WebGLScene' );
-const Lights		= require( 'Lights' );
-const Sphere		= require( 'Sphere' );
+const WebGLScene	= require( 'views/WebGLScene' );
+const Lights		= require( 'views/Lights' );
+const Sphere		= require( 'views/Sphere' );
 
 
 class App {
@@ -52,146 +52,12 @@ class App {
 module.exports = App;
 
 
-},{"Lights":5,"Sphere":7,"WebGLScene":8}],2:[function(require,module,exports){
-
-
-const Detector = require( 'three.js/Detector' );
-
-
-class Config {
-	
-	
-	constructor() {
-		/* -------- Change them as you want -------- */
-		this.ENV				= 'dev'; // 'dev' or 'prod'
-		this.HAS_FPS_STATS		= false;
-		this.HAS_MEMORY_STATS	= false;
-		this.HAS_DAT_GUI		= false;
-		this.WEBGL_DEBUG		= true;
-		/* ----------------------------------------- */
-		
-		this.IS_DEV				= null;
-		this.IS_PROD			= null;
-		this.HAS_WEBGL			= null;
-		
-		
-		this.init();
-	}
-	
-	
-	init() {
-		this.IS_DEV		= this.ENV == 'dev';
-		this.IS_PROD	= this.ENV == 'prod';
-		this.HAS_WEBGL	= Detector !== undefined ? Detector.webgl : null;
-	}
-	
-	
-}
-
-
-module.exports = new Config();
-
-
-},{"three.js/Detector":24}],3:[function(require,module,exports){
-
-
-const signals	= require( 'signals' );
-
-const Config	= require( 'Config' );
-
-
-class CustomEvent {
-	
-	
-	constructor() {
-		this.e						= {};
-		this.E						= {};
-		
-		this.isWarningDispatched	= false;
-	}
-	
-	
-	bind( name, fct, context ) {
-		if ( !name || !fct ) {
-			if ( !Config.IS_PROD ) {
-				let missingParams;
-				
-				if ( !name && !fct )
-					missingParams = 'name and a function';
-				else if ( !name )
-					missingParams = 'name';
-				else if ( !fct )
-					missingParams = 'function';
-				
-				console.warn( 'You must to provide a ' + missingParams + ' to the custom event you want to bind.' );
-			}
-			
-			return;
-		}
-		
-		if ( !context && !Config.IS_PROD )
-			console.warn( 'Bind "' + name + '" custom event without context.' );
-		
-		if ( this.e[ name ] === undefined ) // if the custom event doesn't exist, create it
-			this.e[ name ] = new signals.Signal();
-		
-		this.e[ name ].add( fct, context ); // add the listener to the custom event
-	}
-	
-	
-	unbind( name, fct, context ) {
-		if ( !name ) {
-			if ( !Config.IS_PROD )
-				console.warn( 'You must to define the name of the custom event you want to unbind.' );
-			
-			return;
-		}
-		
-		
-		if ( fct !== undefined && fct !== null ) // remove a single listener from the custom event
-			this.e[ name ].remove( fct, context );
-		
-		else // remove all listeners from the custom event
-			this.e[ name ].removeAll();
-		
-		
-		if ( this.e[ name ].getNumListeners() === 0 ) { // dispose & delete the event if listeners no longer exist
-			this.e[ name ].dispose();
-			delete this.e[ name ];
-		}
-	}
-	
-	
-	dispatch( name, params ) {
-		if ( this.e[ name ] === undefined ) { // if the event is not registred
-			if ( !Config.IS_PROD && !this.isWarningDispatched ) {
-				console.warn( 'Trying to dispath "' + name + '" custom event which is undefined.' );
-				
-				this.isWarningDispatched = true;
-			}
-			
-			return;
-		}
-		
-		if ( params === undefined )
-			this.e[ name ].dispatch();
-		else
-			this.e[ name ].dispatch( params );
-	}
-	
-	
-}
-
-
-module.exports = CustomEvent;
-
-
-},{"Config":2,"signals":22}],4:[function(require,module,exports){
+},{"views/Lights":16,"views/Sphere":17,"views/WebGLScene":18}],2:[function(require,module,exports){
 
 
 require( 'zepto' );
 
-const Main				= require( 'Main' );
+const Main				= require( 'controllers/Main' );
 const DebugController	= require( 'utils/debug/DebugController' );
 const App				= require( 'App' );
 
@@ -222,373 +88,10 @@ const initApp = new InitApp();
 $( initApp.init() );
 
 
-},{"App":1,"Main":6,"utils/debug/DebugController":16,"zepto":27}],5:[function(require,module,exports){
+},{"App":1,"controllers/Main":5,"utils/debug/DebugController":13,"zepto":27}],3:[function(require,module,exports){
 
 
-const AbstractView = require( 'abstracts/AbstractView' );
-
-
-class Lights extends AbstractView {
-	
-	
-	constructor( webGLScene ) {
-		super();
-		
-		this.webGLScene = webGLScene;
-	}
-	
-	
-	init() {
-		console.log( '💡 Lights.init()' );
-		
-		super.init();
-	}
-	
-	
-	initEl() {
-		this._initLights();
-	}
-	
-	
-	bindEvents() {
-		super.bindEvents();
-	}
-	
-	
-	_initLights() {
-		this.directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
-		this.webGLScene.add( this.directionalLight );
-	}
-	
-	
-}
-
-
-module.exports = Lights;
-
-
-},{"abstracts/AbstractView":9}],6:[function(require,module,exports){
-
-
-require( 'greensock/TweenMax' );
-
-const CustomEvent		= require( 'CustomEvent' );
-const Config			= require( 'Config' );
-const Screen			= require( 'controllers/Screen' );
-const Scroll			= require( 'controllers/Scroll' );
-const Mouse				= require( 'controllers/Mouse' );
-// const Touch				= require( 'controllers/Touch' );
-// const Orientation		= require( 'controllers/Orientation' );
-const DOM_				= require( 'utils/DOM' );
-const DebugController	= require( 'utils/debug/DebugController' );
-
-
-class Main extends CustomEvent {
-	
-	
-	constructor() {
-		super();
-		
-		this.E = {
-			RAF: 'raf'
-		};
-	}
-	
-	
-	init() {
-		console.log( '🐣 Main.init()' );
-		
-		this.initDOM();
-		this.initEl();
-		this.bindEvents();
-	}
-	
-	
-	initDOM() {
-		this.$window	= $( window );
-		this.$html		= $( 'html' );
-		this.$body		= $( document.body );
-		this.$mainCont	= $( document.getElementById( 'main-container' ) );
-		this.$pageCont	= $( document.getElementById( 'page-container' ) );
-	}
-	
-	
-	initEl() {
-		Screen.init( this.$window, this.$body, this.$pageCont );
-		Scroll.init( this, this.$window );
-		Mouse.init( this, this.$window, Screen.cX, Screen.cY );
-		// Touch.init( this, this.$window, Screen.cX, Screen.cY );
-		// Orientation.init( this, this.$window );
-		
-		this.setClassWebGL();
-	}
-	
-	
-	bindEvents() {
-		TweenLite.ticker.addEventListener( 'tick', this.raf, this );
-	}
-	
-	
-	raf() {
-		DebugController.rafStart();
-		
-		
-		this.dispatch( this.E.RAF );
-		
-		
-		DebugController.rafEnd();
-	}
-	
-	
-	setClassWebGL() {
-		const webGL = Config.HAS_WEBGL === null ? null : Config.HAS_WEBGL ? 'webgl' : 'no-webgl';
-		if ( webGL )
-			DOM_.addClass( this.$html[0], webGL );
-	}
-	
-	
-}
-
-
-module.exports = new Main();
-
-
-},{"Config":2,"CustomEvent":3,"controllers/Mouse":10,"controllers/Screen":11,"controllers/Scroll":12,"greensock/TweenMax":20,"utils/DOM":13,"utils/debug/DebugController":16}],7:[function(require,module,exports){
-
-
-const glslify		= require( 'glslify' );
-
-const AbstractView	= require( 'abstracts/AbstractView' );
-const Main			= require( 'Main' );
-
-
-class Sphere extends AbstractView {
-	
-	
-	constructor( webGLScene ) {
-		super();
-		
-		this.webGLScene		= webGLScene;
-		
-		this.sphereUniforms	= {};
-		this.sphere			= null;
-	}
-	
-	
-	init() {
-		console.log( '🌍 Sphere.init()' );
-		
-		super.init();
-	}
-	
-	
-	initEl() {
-		this._initUniforms();
-		this._initObject();
-	}
-	
-	
-	bindEvents() {
-		super.bindEvents();
-		
-		Main.bind( Main.E.RAF, this.raf, this );
-	}
-	
-	
-	raf() {
-		
-	}
-	
-	
-	_initUniforms() {
-		this.sphereUniforms = {
-			// diffuse: {
-			// 	type:	'c',
-			// 	value:	new THREE.Color( 0xd6e5e8 )
-			// }
-		};
-		
-		/*this.sphereUniforms = THREE.UniformsUtils.merge( [
-			THREE.ShaderLib.phong.uniforms,
-			customUniforms
-		] );*/
-	}
-	
-	
-	_initObject() {
-		const geometry	= new THREE.SphereBufferGeometry( 20, 32, 32 );
-		/*const material =  new THREE.MeshPhongMaterial( {
-			color: 0xfe7373
-		} );*/
-		const material	= new THREE.ShaderMaterial( {
-			uniforms:		this.sphereUniforms,
-			vertexShader:	glslify(["#define GLSLIFY 1\n\nvoid main() {\n\t\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n\t\n}\n\n"]),
-			fragmentShader:	glslify(["#define GLSLIFY 1\n\nvoid main() {\n\t\n\tgl_FragColor = vec4( 1.0, 0.0, 0.5, 1.0 );\n\t\n}\n"]),
-			wireframe:		true,
-			// lights:			true,
-			// transparent:	true,
-			// fog:			true,
-			// side:			THREE.DoubleSide,
-			// visible:		false,
-		} );
-		this.sphere		= new THREE.Mesh( geometry, material );
-		this.webGLScene.add( this.sphere );
-	}
-	
-	
-}
-
-
-module.exports = Sphere;
-
-
-},{"Main":6,"abstracts/AbstractView":9,"glslify":28}],8:[function(require,module,exports){
-(function (global){
-
-
-global.THREE	= require( 'three.js/three.min' );
-require( 'three.js/OrbitControls' );
-
-const AbstractView	= require( 'abstracts/AbstractView' );
-const Config		= require( 'Config' );
-const Main			= require( 'Main' );
-const Screen		= require( 'controllers/Screen' );
-
-
-class WebGLScene extends AbstractView {
-	
-	
-	constructor() {
-		super();
-		
-		this.scene		= null;
-		this.camera		= null;
-		this.renderer	= null;
-	}
-	
-	
-	init() {
-		console.log( '🎥 WebGLScene.init()' );
-		
-		super.init();
-		
-		if ( Config.WEBGL_DEBUG )
-			this._initHelpers();
-	}
-	
-	
-	initDOM() {
-		this.$webGLCont = $( document.getElementById( 'webgl-container' ) );
-	}
-	
-	
-	initEl() {
-		this._initScene();
-	}
-	
-	
-	bindEvents() {
-		super.bindEvents();
-		
-		Main.bind( Main.E.RAF, this.raf, this );
-	}
-	
-	
-	_initScene() {
-		this.scene		= new THREE.Scene();
-		
-		this.camera		= new THREE.PerspectiveCamera( 45, Screen.bW / Screen.wH, 0.1, 10000 );
-		this.cameraTg	= new THREE.Vector3( 0, 0, 0 );
-		this.camera.lookAt( this.cameraTg );
-		this.camera.position.set( 0, 0, 100 );
-		
-		this.renderer	= new THREE.WebGLRenderer( {
-			antialias: true
-		} );
-		this.renderer.setSize( Screen.bW, Screen.wH );
-		this.$webGLCont[0].appendChild( this.renderer.domElement );
-	}
-	
-	
-	resize() {
-		this.camera.aspect = Screen.bW / Screen.wH;
-		this.camera.updateProjectionMatrix();
-		
-		this.renderer.setSize( Screen.bW, Screen.wH );
-	}
-	
-	
-	raf() {
-		this.renderer.render( this.scene, this.camera );
-	}
-	
-	
-	add( obj ) {
-		if ( obj !== null )
-			this.scene.add( obj );
-	}
-	
-	
-	remove( obj ) {
-		if ( obj )
-			this.scene.remove( obj );
-		
-		for ( let i = 0; i < obj.children.length; i++ ) {
-			const child = obj.children[ i ];
-			
-			this.disposeGeometry( child.geometry );
-			this.disposeMaterial( child.material );
-			this.disposeTexture( child.texture );
-		}
-	}
-	
-	
-	disposeGeometry( geometry ) {
-		if ( geometry )
-			geometry.dispose();
-	}
-	
-	
-	disposeMaterial( material ) {
-		if ( material )
-			material.dispose();
-	}
-	
-	
-	disposeTexture( texture ) {
-		if ( texture )
-			texture.dispose();
-	}
-	
-	
-	_initHelpers() {
-		const cameraDebug = this.camera.clone();
-		this.add( cameraDebug );
-		this.camera.far = 100000;
-		this.camera.updateProjectionMatrix();
-		
-		const controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
-		
-		const cameraHelper = new THREE.CameraHelper( cameraDebug );
-		this.add( cameraHelper );
-		
-		const axisHelper = new THREE.AxisHelper( 300 );
-		this.add( axisHelper );
-	}	
-	
-	
-}
-
-
-module.exports = WebGLScene;
-
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-
-},{"Config":2,"Main":6,"abstracts/AbstractView":9,"controllers/Screen":11,"three.js/OrbitControls":25,"three.js/three.min":26}],9:[function(require,module,exports){
-
-
-const CustomEvent	= require( 'CustomEvent' );
+const CustomEvent	= require( 'events/CustomEvent' );
 const Screen		= require( 'controllers/Screen' );
 
 
@@ -729,10 +232,136 @@ class AbstractView extends CustomEvent {
 module.exports = AbstractView;
 
 
-},{"CustomEvent":3,"controllers/Screen":11}],10:[function(require,module,exports){
+},{"controllers/Screen":7,"events/CustomEvent":9}],4:[function(require,module,exports){
 
 
-const CustomEvent	= require( 'CustomEvent' );
+const Detector = require( 'three.js/Detector' );
+
+
+class Config {
+	
+	
+	constructor() {
+		/* -------- Change them as you want -------- */
+		this.ENV				= 'dev'; // 'dev' or 'prod'
+		this.HAS_FPS_STATS		= false;
+		this.HAS_MEMORY_STATS	= false;
+		this.HAS_DAT_GUI		= false;
+		this.WEBGL_DEBUG		= true;
+		/* ----------------------------------------- */
+		
+		this.IS_DEV				= null;
+		this.IS_PROD			= null;
+		this.HAS_WEBGL			= null;
+		
+		
+		this.init();
+	}
+	
+	
+	init() {
+		this.IS_DEV		= this.ENV == 'dev';
+		this.IS_PROD	= this.ENV == 'prod';
+		this.HAS_WEBGL	= Detector !== undefined ? Detector.webgl : null;
+	}
+	
+	
+}
+
+
+module.exports = new Config();
+
+
+},{"three.js/Detector":24}],5:[function(require,module,exports){
+
+
+require( 'greensock/TweenMax' );
+
+const CustomEvent		= require( 'events/CustomEvent' );
+const Config			= require( 'configs/Config' );
+const Screen			= require( 'controllers/Screen' );
+const Scroll			= require( 'controllers/Scroll' );
+const Mouse				= require( 'controllers/Mouse' );
+// const Touch				= require( 'controllers/Touch' );
+// const Orientation		= require( 'controllers/Orientation' );
+const DOM_				= require( 'utils/DOM' );
+const DebugController	= require( 'utils/debug/DebugController' );
+
+
+class Main extends CustomEvent {
+	
+	
+	constructor() {
+		super();
+		
+		this.E = {
+			RAF: 'raf'
+		};
+	}
+	
+	
+	init() {
+		console.log( '🐣 Main.init()' );
+		
+		this.initDOM();
+		this.initEl();
+		this.bindEvents();
+	}
+	
+	
+	initDOM() {
+		this.$window	= $( window );
+		this.$html		= $( 'html' );
+		this.$body		= $( document.body );
+		this.$mainCont	= $( document.getElementById( 'main-container' ) );
+		this.$pageCont	= $( document.getElementById( 'page-container' ) );
+	}
+	
+	
+	initEl() {
+		Screen.init( this.$window, this.$body, this.$pageCont );
+		Scroll.init( this, this.$window );
+		Mouse.init( this, this.$window, Screen.cX, Screen.cY );
+		// Touch.init( this, this.$window, Screen.cX, Screen.cY );
+		// Orientation.init( this, this.$window );
+		
+		this.setClassWebGL();
+	}
+	
+	
+	bindEvents() {
+		TweenLite.ticker.addEventListener( 'tick', this.raf, this );
+	}
+	
+	
+	raf() {
+		DebugController.rafStart();
+		
+		
+		this.dispatch( this.E.RAF );
+		
+		
+		DebugController.rafEnd();
+	}
+	
+	
+	setClassWebGL() {
+		const webGL = Config.HAS_WEBGL === null ? null : Config.HAS_WEBGL ? 'webgl' : 'no-webgl';
+		if ( webGL )
+			DOM_.addClass( this.$html[0], webGL );
+	}
+	
+	
+}
+
+
+module.exports = new Main();
+
+
+},{"configs/Config":4,"controllers/Mouse":6,"controllers/Screen":7,"controllers/Scroll":8,"events/CustomEvent":9,"greensock/TweenMax":20,"utils/DOM":10,"utils/debug/DebugController":13}],6:[function(require,module,exports){
+
+
+const CustomEvent	= require( 'events/CustomEvent' );
 const Math_			= require( 'utils/Math' );
 
 
@@ -831,10 +460,10 @@ class Mouse extends CustomEvent {
 module.exports = new Mouse();
 
 
-},{"CustomEvent":3,"utils/Math":14}],11:[function(require,module,exports){
+},{"events/CustomEvent":9,"utils/Math":11}],7:[function(require,module,exports){
 
 
-const CustomEvent = require( 'CustomEvent' );
+const CustomEvent = require( 'events/CustomEvent' );
 
 
 class Screen extends CustomEvent {
@@ -934,10 +563,10 @@ class Screen extends CustomEvent {
 module.exports = new Screen();
 
 
-},{"CustomEvent":3}],12:[function(require,module,exports){
+},{"events/CustomEvent":9}],8:[function(require,module,exports){
 
 
-const CustomEvent	= require( 'CustomEvent' );
+const CustomEvent	= require( 'events/CustomEvent' );
 const Math_			= require( 'utils/Math' );
 
 
@@ -1006,7 +635,101 @@ class Scroll extends CustomEvent {
 module.exports = new Scroll();
 
 
-},{"CustomEvent":3,"utils/Math":14}],13:[function(require,module,exports){
+},{"events/CustomEvent":9,"utils/Math":11}],9:[function(require,module,exports){
+
+
+const signals	= require( 'signals' );
+
+const Config	= require( 'configs/Config' );
+
+
+class CustomEvent {
+	
+	
+	constructor() {
+		this.e						= {};
+		this.E						= {};
+		
+		this.isWarningDispatched	= false;
+	}
+	
+	
+	bind( name, fct, context ) {
+		if ( !name || !fct ) {
+			if ( !Config.IS_PROD ) {
+				let missingParams;
+				
+				if ( !name && !fct )
+					missingParams = 'name and a function';
+				else if ( !name )
+					missingParams = 'name';
+				else if ( !fct )
+					missingParams = 'function';
+				
+				console.warn( 'You must to provide a ' + missingParams + ' to the custom event you want to bind.' );
+			}
+			
+			return;
+		}
+		
+		if ( !context && !Config.IS_PROD )
+			console.warn( 'Bind "' + name + '" custom event without context.' );
+		
+		if ( this.e[ name ] === undefined ) // if the custom event doesn't exist, create it
+			this.e[ name ] = new signals.Signal();
+		
+		this.e[ name ].add( fct, context ); // add the listener to the custom event
+	}
+	
+	
+	unbind( name, fct, context ) {
+		if ( !name ) {
+			if ( !Config.IS_PROD )
+				console.warn( 'You must to define the name of the custom event you want to unbind.' );
+			
+			return;
+		}
+		
+		
+		if ( fct !== undefined && fct !== null ) // remove a single listener from the custom event
+			this.e[ name ].remove( fct, context );
+		
+		else // remove all listeners from the custom event
+			this.e[ name ].removeAll();
+		
+		
+		if ( this.e[ name ].getNumListeners() === 0 ) { // dispose & delete the event if listeners no longer exist
+			this.e[ name ].dispose();
+			delete this.e[ name ];
+		}
+	}
+	
+	
+	dispatch( name, params ) {
+		if ( this.e[ name ] === undefined ) { // if the event is not registred
+			if ( !Config.IS_PROD && !this.isWarningDispatched ) {
+				console.warn( 'Trying to dispath "' + name + '" custom event which is undefined.' );
+				
+				this.isWarningDispatched = true;
+			}
+			
+			return;
+		}
+		
+		if ( params === undefined )
+			this.e[ name ].dispatch();
+		else
+			this.e[ name ].dispatch( params );
+	}
+	
+	
+}
+
+
+module.exports = CustomEvent;
+
+
+},{"configs/Config":4,"signals":22}],10:[function(require,module,exports){
 
 
 class DOM_ {
@@ -1080,7 +803,7 @@ class DOM_ {
 module.exports = new DOM_();
 
 
-},{}],14:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 
 
 class Math_ {
@@ -1175,7 +898,7 @@ class Math_ {
 module.exports = new Math_();
 
 
-},{}],15:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 
 
 const dat = require( 'dat.gui' );
@@ -1260,10 +983,10 @@ class DatGUI {
 module.exports = new DatGUI();
 
 
-},{"dat.gui":19}],16:[function(require,module,exports){
+},{"dat.gui":19}],13:[function(require,module,exports){
 
 
-const Config		= require( 'Config' );
+const Config		= require( 'configs/Config' );
 const FPSStats		= require( 'utils/debug/FPSStats' );
 const MemoryStats	= require( 'utils/debug/MemoryStats' );
 const DatGUI		= require( 'utils/debug/DatGUI' );
@@ -1343,7 +1066,7 @@ class DebugController {
 module.exports = new DebugController();
 
 
-},{"Config":2,"utils/debug/DatGUI":15,"utils/debug/FPSStats":17,"utils/debug/MemoryStats":18}],17:[function(require,module,exports){
+},{"configs/Config":4,"utils/debug/DatGUI":12,"utils/debug/FPSStats":14,"utils/debug/MemoryStats":15}],14:[function(require,module,exports){
 
 
 const Stats = require( 'stats' );
@@ -1388,7 +1111,7 @@ class FPSStats {
 module.exports = new FPSStats();
 
 
-},{"stats":23}],18:[function(require,module,exports){
+},{"stats":23}],15:[function(require,module,exports){
 
 
 const Stats = require( 'memory-stats' );
@@ -1425,7 +1148,284 @@ class MemoryStats {
 module.exports = new MemoryStats();
 
 
-},{"memory-stats":21}],19:[function(require,module,exports){
+},{"memory-stats":21}],16:[function(require,module,exports){
+
+
+const AbstractView = require( 'abstracts/AbstractView' );
+
+
+class Lights extends AbstractView {
+	
+	
+	constructor( webGLScene ) {
+		super();
+		
+		this.webGLScene = webGLScene;
+	}
+	
+	
+	init() {
+		console.log( '💡 Lights.init()' );
+		
+		super.init();
+	}
+	
+	
+	initEl() {
+		this._initLights();
+	}
+	
+	
+	bindEvents() {
+		super.bindEvents();
+	}
+	
+	
+	_initLights() {
+		this.directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+		this.webGLScene.add( this.directionalLight );
+	}
+	
+	
+}
+
+
+module.exports = Lights;
+
+
+},{"abstracts/AbstractView":3}],17:[function(require,module,exports){
+
+
+const glslify		= require( 'glslify' );
+
+const AbstractView	= require( 'abstracts/AbstractView' );
+const Main			= require( 'controllers/Main' );
+
+
+class Sphere extends AbstractView {
+	
+	
+	constructor( webGLScene ) {
+		super();
+		
+		this.webGLScene		= webGLScene;
+		
+		this.sphereUniforms	= {};
+		this.sphere			= null;
+	}
+	
+	
+	init() {
+		console.log( '🌍 Sphere.init()' );
+		
+		super.init();
+	}
+	
+	
+	initEl() {
+		this._initUniforms();
+		this._initObject();
+	}
+	
+	
+	bindEvents() {
+		super.bindEvents();
+		
+		Main.bind( Main.E.RAF, this.raf, this );
+	}
+	
+	
+	raf() {
+		
+	}
+	
+	
+	_initUniforms() {
+		this.sphereUniforms = {
+			// diffuse: {
+			// 	type:	'c',
+			// 	value:	new THREE.Color( 0xd6e5e8 )
+			// }
+		};
+		
+		/*this.sphereUniforms = THREE.UniformsUtils.merge( [
+			THREE.ShaderLib.phong.uniforms,
+			customUniforms
+		] );*/
+	}
+	
+	
+	_initObject() {
+		const geometry	= new THREE.SphereBufferGeometry( 20, 32, 32 );
+		/*const material =  new THREE.MeshPhongMaterial( {
+			color: 0xfe7373
+		} );*/
+		const material	= new THREE.ShaderMaterial( {
+			uniforms:		this.sphereUniforms,
+			vertexShader:	glslify(["#define GLSLIFY 1\n\nvoid main() {\n\t\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n\t\n}\n\n"]),
+			fragmentShader:	glslify(["#define GLSLIFY 1\n\nvoid main() {\n\t\n\tgl_FragColor = vec4( 1.0, 0.0, 0.5, 1.0 );\n\t\n}\n"]),
+			wireframe:		true,
+			// lights:			true,
+			// transparent:	true,
+			// fog:			true,
+			// side:			THREE.DoubleSide,
+			// visible:		false,
+		} );
+		this.sphere		= new THREE.Mesh( geometry, material );
+		this.webGLScene.add( this.sphere );
+	}
+	
+	
+}
+
+
+module.exports = Sphere;
+
+
+},{"abstracts/AbstractView":3,"controllers/Main":5,"glslify":28}],18:[function(require,module,exports){
+(function (global){
+
+
+global.THREE	= require( 'three.js/three.min' );
+require( 'three.js/OrbitControls' );
+
+const AbstractView	= require( 'abstracts/AbstractView' );
+const Config		= require( 'configs/Config' );
+const Main			= require( 'controllers/Main' );
+const Screen		= require( 'controllers/Screen' );
+
+
+class WebGLScene extends AbstractView {
+	
+	
+	constructor() {
+		super();
+		
+		this.scene		= null;
+		this.camera		= null;
+		this.renderer	= null;
+	}
+	
+	
+	init() {
+		console.log( '🎥 WebGLScene.init()' );
+		
+		super.init();
+		
+		if ( Config.WEBGL_DEBUG )
+			this._initHelpers();
+	}
+	
+	
+	initDOM() {
+		this.$webGLCont = $( document.getElementById( 'webgl-container' ) );
+	}
+	
+	
+	initEl() {
+		this._initScene();
+	}
+	
+	
+	bindEvents() {
+		super.bindEvents();
+		
+		Main.bind( Main.E.RAF, this.raf, this );
+	}
+	
+	
+	_initScene() {
+		this.scene		= new THREE.Scene();
+		
+		this.camera		= new THREE.PerspectiveCamera( 45, Screen.bW / Screen.wH, 0.1, 10000 );
+		this.cameraTg	= new THREE.Vector3( 0, 0, 0 );
+		this.camera.lookAt( this.cameraTg );
+		this.camera.position.set( 0, 0, 100 );
+		
+		this.renderer	= new THREE.WebGLRenderer( {
+			antialias: true
+		} );
+		this.renderer.setSize( Screen.bW, Screen.wH );
+		this.$webGLCont[0].appendChild( this.renderer.domElement );
+	}
+	
+	
+	resize() {
+		this.camera.aspect = Screen.bW / Screen.wH;
+		this.camera.updateProjectionMatrix();
+		
+		this.renderer.setSize( Screen.bW, Screen.wH );
+	}
+	
+	
+	raf() {
+		this.renderer.render( this.scene, this.camera );
+	}
+	
+	
+	add( obj ) {
+		if ( obj !== null )
+			this.scene.add( obj );
+	}
+	
+	
+	remove( obj ) {
+		if ( obj )
+			this.scene.remove( obj );
+		
+		for ( let i = 0; i < obj.children.length; i++ ) {
+			const child = obj.children[ i ];
+			
+			this.disposeGeometry( child.geometry );
+			this.disposeMaterial( child.material );
+			this.disposeTexture( child.texture );
+		}
+	}
+	
+	
+	disposeGeometry( geometry ) {
+		if ( geometry )
+			geometry.dispose();
+	}
+	
+	
+	disposeMaterial( material ) {
+		if ( material )
+			material.dispose();
+	}
+	
+	
+	disposeTexture( texture ) {
+		if ( texture )
+			texture.dispose();
+	}
+	
+	
+	_initHelpers() {
+		const cameraDebug = this.camera.clone();
+		this.add( cameraDebug );
+		this.camera.far = 100000;
+		this.camera.updateProjectionMatrix();
+		
+		const controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
+		
+		const cameraHelper = new THREE.CameraHelper( cameraDebug );
+		this.add( cameraHelper );
+		
+		const axisHelper = new THREE.AxisHelper( 300 );
+		this.add( axisHelper );
+	}	
+	
+	
+}
+
+
+module.exports = WebGLScene;
+
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
+},{"abstracts/AbstractView":3,"configs/Config":4,"controllers/Main":5,"controllers/Screen":7,"three.js/OrbitControls":25,"three.js/three.min":26}],19:[function(require,module,exports){
 /**
  * dat-gui JavaScript Controller Library
  * http://code.google.com/p/dat-gui
@@ -14736,6 +14736,6 @@ module.exports = function(strings) {
   return parts.join('')
 }
 
-},{}]},{},[4])
+},{}]},{},[2])
 
 //# sourceMappingURL=maps/scripts.js.map

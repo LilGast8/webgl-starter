@@ -2,7 +2,7 @@
 
 require( 'zepto' );
 
-const Main				= require( 'Main' );
+const Main				= require( 'controllers/Main' );
 const DebugController	= require( 'utils/debug/DebugController' );
 const App				= require( 'App' );
 

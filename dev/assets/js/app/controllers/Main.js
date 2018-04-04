@@ -2,8 +2,8 @@
 
 require( 'greensock/TweenMax' );
 
-const CustomEvent		= require( 'CustomEvent' );
-const Config			= require( 'Config' );
+const CustomEvent		= require( 'events/CustomEvent' );
+const Config			= require( 'configs/Config' );
 const Screen			= require( 'controllers/Screen' );
 const Scroll			= require( 'controllers/Scroll' );
 const Mouse				= require( 'controllers/Mouse' );

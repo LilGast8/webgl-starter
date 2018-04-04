@@ -2,7 +2,7 @@
 
 const signals	= require( 'signals' );
 
-const Config	= require( 'Config' );
+const Config	= require( 'configs/Config' );
 
 
 class CustomEvent {

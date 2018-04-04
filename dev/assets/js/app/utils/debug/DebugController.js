@@ -1,6 +1,6 @@
 
 
-const Config		= require( 'Config' );
+const Config		= require( 'configs/Config' );
 const FPSStats		= require( 'utils/debug/FPSStats' );
 const MemoryStats	= require( 'utils/debug/MemoryStats' );
 const DatGUI		= require( 'utils/debug/DatGUI' );

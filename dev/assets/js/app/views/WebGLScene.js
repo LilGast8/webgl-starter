@@ -4,8 +4,8 @@ global.THREE	= require( 'three.js/three.min' );
 require( 'three.js/OrbitControls' );
 
 const AbstractView	= require( 'abstracts/AbstractView' );
-const Config		= require( 'Config' );
-const Main			= require( 'Main' );
+const Config		= require( 'configs/Config' );
+const Main			= require( 'controllers/Main' );
 const Screen		= require( 'controllers/Screen' );
 
 

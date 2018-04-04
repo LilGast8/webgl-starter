@@ -1,8 +1,8 @@
 
 
-const WebGLScene	= require( 'WebGLScene' );
-const Lights		= require( 'Lights' );
-const Sphere		= require( 'Sphere' );
+const WebGLScene	= require( 'views/WebGLScene' );
+const Lights		= require( 'views/Lights' );
+const Sphere		= require( 'views/Sphere' );
 
 
 class App {

@@ -3,7 +3,7 @@
 const glslify		= require( 'glslify' );
 
 const AbstractView	= require( 'abstracts/AbstractView' );
-const Main			= require( 'Main' );
+const Main			= require( 'controllers/Main' );
 
 
 class Sphere extends AbstractView {
@@ -66,8 +66,8 @@ class Sphere extends AbstractView {
 		} );*/
 		const material	= new THREE.ShaderMaterial( {
 			uniforms:		this.sphereUniforms,
-			vertexShader:	glslify( '../../3d/shaders/sphere.vert' ),
-			fragmentShader:	glslify( '../../3d/shaders/sphere.frag' ),
+			vertexShader:	glslify( '../../../3d/shaders/sphere.vert' ),
+			fragmentShader:	glslify( '../../../3d/shaders/sphere.frag' ),
 			wireframe:		true,
 			// lights:			true,
 			// transparent:	true,

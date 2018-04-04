@@ -1,6 +1,6 @@
 
 
-const CustomEvent	= require( 'CustomEvent' );
+const CustomEvent	= require( 'events/CustomEvent' );
 const Math_			= require( 'utils/Math' );
 
 
