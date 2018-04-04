@@ -23,25 +23,25 @@ class Sphere extends AbstractView {
 		console.log( '🌍 Sphere.init()' );
 		
 		super.init();
-	};
+	}
 	
 	
 	initEl() {
 		this._initUniforms();
 		this._initObject();
-	};
+	}
 	
 	
 	bindEvents() {
 		super.bindEvents();
 		
 		Main.bind( Main.E.RAF, this.raf, this );
-	};
+	}
 	
 	
 	raf() {
 		
-	};
+	}
 	
 	
 	_initUniforms() {
@@ -56,7 +56,7 @@ class Sphere extends AbstractView {
 			THREE.ShaderLib.phong.uniforms,
 			customUniforms
 		] );*/
-	};
+	}
 	
 	
 	_initObject() {
@@ -77,7 +77,7 @@ class Sphere extends AbstractView {
 		} );
 		this.sphere		= new THREE.Mesh( geometry, material );
 		this.webGLScene.add( this.sphere );
-	};
+	}
 	
 	
 }

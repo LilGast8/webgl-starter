@@ -28,24 +28,24 @@ class WebGLScene extends AbstractView {
 		
 		if ( Config.WEBGL_DEBUG )
 			this._initHelpers();
-	};
+	}
 	
 	
 	initDOM() {
 		this.$webGLCont = $( document.getElementById( 'webgl-container' ) );
-	};
+	}
 	
 	
 	initEl() {
 		this._initScene();
-	};
+	}
 	
 	
 	bindEvents() {
 		super.bindEvents();
 		
 		Main.bind( Main.E.RAF, this.raf, this );
-	};
+	}
 	
 	
 	_initScene() {
@@ -61,7 +61,7 @@ class WebGLScene extends AbstractView {
 		} );
 		this.renderer.setSize( Screen.bW, Screen.wH );
 		this.$webGLCont[0].appendChild( this.renderer.domElement );
-	};
+	}
 	
 	
 	resize() {
@@ -69,18 +69,18 @@ class WebGLScene extends AbstractView {
 		this.camera.updateProjectionMatrix();
 		
 		this.renderer.setSize( Screen.bW, Screen.wH );
-	};
+	}
 	
 	
 	raf() {
 		this.renderer.render( this.scene, this.camera );
-	};
+	}
 	
 	
 	add( obj ) {
 		if ( obj !== null )
 			this.scene.add( obj );
-	};
+	}
 	
 	
 	remove( obj ) {
@@ -94,25 +94,25 @@ class WebGLScene extends AbstractView {
 			this.disposeMaterial( child.material );
 			this.disposeTexture( child.texture );
 		}
-	};
+	}
 	
 	
 	disposeGeometry( geometry ) {
 		if ( geometry )
 			geometry.dispose();
-	};
+	}
 	
 	
 	disposeMaterial( material ) {
 		if ( material )
 			material.dispose();
-	};
+	}
 	
 	
 	disposeTexture( texture ) {
 		if ( texture )
 			texture.dispose();
-	};
+	}
 	
 	
 	_initHelpers() {
@@ -128,7 +128,7 @@ class WebGLScene extends AbstractView {
 		
 		const axisHelper = new THREE.AxisHelper( 300 );
 		this.add( axisHelper );
-	};	
+	}	
 	
 	
 }

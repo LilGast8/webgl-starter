@@ -93,7 +93,7 @@ class Mouse extends CustomEvent {
 	}
 	
 	
-};
+}
 
 
 module.exports = new Mouse();

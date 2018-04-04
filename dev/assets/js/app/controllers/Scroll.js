@@ -63,7 +63,7 @@ class Scroll extends CustomEvent {
 	}
 	
 	
-};
+}
 
 
 module.exports = new Scroll();

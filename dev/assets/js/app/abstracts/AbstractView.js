@@ -31,63 +31,63 @@ class AbstractView extends CustomEvent {
 		this.bindEvents();
 		
 		this.resize();
-	};
+	}
 	
 	
 	initDOM() {
 		// console.log( 'AbstractView.initDOM() — ', this.constructor.name );
-	};
+	}
 	
 	
 	initEl() {
 		// console.log( 'AbstractView.initEl() — ', this.constructor.name );
-	};
+	}
 	
 	
 	initTl() {
 		// console.log( 'AbstractView.initTl() — ', this.constructor.name );
-	};
+	}
 	
 	
 	bindEvents() {
-		console.log( 'AbstractView.bindEvents() — ', this.constructor.name );
+		// console.log( 'AbstractView.bindEvents() — ', this.constructor.name );
 		
 		Screen.bind( Screen.E.RESIZE, this.resize, this );
-	};
+	}
 	
 	
 	unbindEvents() {
 		// console.log( 'AbstractView.unbindEvents() — ', this.constructor.name );
 		
 		Screen.unbind( Screen.E.RESIZE, this.resize, this );
-	};
+	}
 	
 	
 	initView() {
 		// console.log( 'AbstractView.initView() — ', this.constructor.name );
 		
 		this.isInit = true;
-	};
+	}
 	
 	
 	show() {
 		// console.log( 'AbstractView.show() — ', this.constructor.name );
-	};
+	}
 	
 	
 	hide() {
 		// console.log( 'AbstractView.hide() — ', this.constructor.name );
-	};
+	}
 	
 	
 	resize() {
 		// console.log( 'AbstractView.resize() — ', this.constructor.name );
-	};
+	}
 	
 	
 	raf() {
 		// console.log( 'AbstractView.raf() — ', this.constructor.name );
-	};
+	}
 	
 	
 	destroy() {
@@ -96,7 +96,7 @@ class AbstractView extends CustomEvent {
 		this.unbindEvents();
 		
 		this.destroyGSAP();
-	};
+	}
 	
 	
 	destroyGSAP() {
@@ -110,7 +110,7 @@ class AbstractView extends CustomEvent {
 		
 		this.tl = {};
 		this.tw = {};
-	};
+	}
 	
 	
 	killTween( twName ) {
@@ -120,7 +120,7 @@ class AbstractView extends CustomEvent {
 		this.tw[ twName ].kill();
 		
 		this.tw[ twName ] = null;
-	};
+	}
 	
 	
 	killTimeline( tlName ) {
@@ -132,7 +132,7 @@ class AbstractView extends CustomEvent {
 		this.tl[ tlName ].kill();
 		
 		this.tl[ tlName ] = null;
-	};
+	}
 	
 	
 }

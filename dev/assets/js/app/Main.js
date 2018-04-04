@@ -2,14 +2,15 @@
 
 require( 'greensock/TweenMax' );
 
-const CustomEvent	= require( 'CustomEvent' );
-const Config		= require( 'Config' );
-const Screen		= require( 'controllers/Screen' );
-const Scroll		= require( 'controllers/Scroll' );
-const Mouse			= require( 'controllers/Mouse' );
-// const Touch			= require( 'controllers/Touch' );
-// const Orientation	= require( 'controllers/Orientation' );
-const DOM_			= require( 'utils/DOM' );
+const CustomEvent		= require( 'CustomEvent' );
+const Config			= require( 'Config' );
+const Screen			= require( 'controllers/Screen' );
+const Scroll			= require( 'controllers/Scroll' );
+const Mouse				= require( 'controllers/Mouse' );
+// const Touch				= require( 'controllers/Touch' );
+// const Orientation		= require( 'controllers/Orientation' );
+const DOM_				= require( 'utils/DOM' );
+const DebugController	= require( 'utils/debug/DebugController' );
 
 
 class Main extends CustomEvent {
@@ -43,9 +44,6 @@ class Main extends CustomEvent {
 	
 	
 	initEl() {
-		// if ( Config.IS_DEV )
-		// 	FPSStats.init();
-		
 		Screen.init( this.$window, this.$body, this.$pageCont );
 		Scroll.init( this, this.$window );
 		Mouse.init( this, this.$window, Screen.cX, Screen.cY );
@@ -62,13 +60,13 @@ class Main extends CustomEvent {
 	
 	
 	raf() {
-		// STF.Utils.Debug.DebugController.rafStart();
+		DebugController.rafStart();
 		
 		
 		this.dispatch( this.E.RAF );
 		
 		
-		// STF.Utils.Debug.DebugController.rafEnd();
+		DebugController.rafEnd();
 	}
 	
 	
@@ -79,7 +77,7 @@ class Main extends CustomEvent {
 	}
 	
 	
-};
+}
 
 
 module.exports = new Main();

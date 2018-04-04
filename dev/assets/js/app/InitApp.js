@@ -2,8 +2,9 @@
 
 require( 'zepto' );
 
-const Main	= require( 'Main' );
-const App	= require( 'App' );
+const Main				= require( 'Main' );
+const DebugController	= require( 'utils/debug/DebugController' );
+const App				= require( 'App' );
 
 
 class InitApp {
@@ -15,6 +16,7 @@ class InitApp {
 	
 	
 	init() {
+		DebugController.init();
 		Main.init();
 		
 		const app = new App();
@@ -22,7 +24,7 @@ class InitApp {
 	}
 	
 	
-};
+}
 
 
 const initApp = new InitApp();

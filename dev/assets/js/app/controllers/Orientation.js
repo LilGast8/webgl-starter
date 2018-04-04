@@ -312,7 +312,7 @@ class Orientation extends CustomEvent {
 	}
 	
 	
-};
+}
 
 
 module.exports = new Orientation();

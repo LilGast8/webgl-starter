@@ -7,14 +7,17 @@ class Config {
 	
 	
 	constructor() {
-		this.ENV			= 'dev'; // 'dev' or 'prod'
-		this.IS_DEV			= null;
-		this.IS_PROD		= null;
+		/* -------- Change them as you want -------- */
+		this.ENV				= 'dev'; // 'dev' or 'prod'
+		this.HAS_FPS_STATS		= false;
+		this.HAS_MEMORY_STATS	= false;
+		this.HAS_DAT_GUI		= false;
+		this.WEBGL_DEBUG		= true;
+		/* ----------------------------------------- */
 		
-		this.HAS_FPS_STATS	= true;
-		this.WEBGL_DEBUG	= true;
-		
-		this.HAS_WEBGL		= null;
+		this.IS_DEV				= null;
+		this.IS_PROD			= null;
+		this.HAS_WEBGL			= null;
 		
 		
 		this.init();
@@ -24,7 +27,6 @@ class Config {
 	init() {
 		this.IS_DEV		= this.ENV == 'dev';
 		this.IS_PROD	= this.ENV == 'prod';
-		
 		this.HAS_WEBGL	= Detector !== undefined ? Detector.webgl : null;
 	}
 	

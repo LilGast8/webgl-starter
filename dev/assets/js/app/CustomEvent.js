@@ -85,7 +85,7 @@ class CustomEvent {
 	}
 	
 	
-};
+}
 
 
 module.exports = CustomEvent;

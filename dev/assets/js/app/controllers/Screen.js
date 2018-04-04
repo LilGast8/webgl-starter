@@ -94,7 +94,7 @@ class Screen extends CustomEvent {
 	}
 	
 	
-};
+}
 
 
 module.exports = new Screen();

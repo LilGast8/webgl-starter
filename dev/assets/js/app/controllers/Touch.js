@@ -99,7 +99,7 @@ class Touch extends CustomEvent {
 	}
 	
 	
-};
+}
 
 
 module.exports = new Touch();
