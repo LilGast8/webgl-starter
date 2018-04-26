@@ -128,7 +128,7 @@ class WebGLScene extends AbstractView {
 		
 		const axisHelper = new THREE.AxisHelper( 300 );
 		this.add( axisHelper );
-	}	
+	}
 	
 	
 }
