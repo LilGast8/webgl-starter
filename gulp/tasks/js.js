@@ -1,25 +1,25 @@
-var gulp		= require( 'gulp' );
+import gulp from 'gulp';
 
-var paths		= require( '../utils/paths' );
+import paths from '../utils/paths';
 
-var watchify	= require( 'watchify' );
-var browserify	= require( 'browserify' );
-var source		= require( 'vinyl-source-stream' );
-var buffer		= require( 'vinyl-buffer' );
-var sourcemaps	= require( 'gulp-sourcemaps' );
+import watchify from 'watchify';
+import browserify from 'browserify';
+import source from 'vinyl-source-stream';
+import buffer from 'vinyl-buffer';
+import sourcemaps from 'gulp-sourcemaps';
 
-var assign		= require( 'lodash.assign' );
+import assign from 'lodash.assign';
 
-var notify		= require( 'gulp-notify' );
-var gutil		= require( 'gulp-util' );
+import notify from 'gulp-notify';
+import gutil from 'gulp-util';
 
-var glslify		= require( 'glslify' );
+import glslify from 'glslify';
 
 
 
-gulp.task( 'js', function() {
+gulp.task( 'js', () => {
 	
-	var customOptions = {
+	const customOptions = {
 		entries: 		[ paths.env.dev + paths.assets.js.app.dir + 'InitApp.js' ],
 		paths:			[
 							paths.env.dev + paths.assets.js.app.dir,
@@ -32,11 +32,11 @@ gulp.task( 'js', function() {
 		]
 	};
 	
-	var options	= assign( {}, watchify.args, customOptions );
-	var bundler	= watchify( browserify( options ) );
+	const options	= assign( {}, watchify.args, customOptions );
+	const bundler	= watchify( browserify( options ) );
 	
 	
-	bundler.on( 'update', function() {
+	bundler.on( 'update', () => {
 		bundle( bundler );
 	} );
 	bundler.on( 'log', gutil.log );
@@ -50,7 +50,7 @@ gulp.task( 'js', function() {
 
 function bundle( bundler ) {
 	return bundler.bundle()
-		.on( 'error', function( error ) {
+		.on( 'error', ( error ) => {
 			notify().write( error.message );
 			console.log( gutil.colors.red( error.message ) );
 		} )

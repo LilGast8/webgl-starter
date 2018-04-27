@@ -1,27 +1,25 @@
-var gulp			= require( 'gulp' );
-var path			= require( 'path' );
+import gulp from 'gulp';
+import path from 'path';
 
-var cssSupports		= require( '../utils/css-supports' );
-var paths			= require( '../utils/paths' );
+import cssSupports from '../utils/css-supports';
+import paths from '../utils/paths';
 
-var plumber			= require( 'gulp-plumber' );
-var gutil			= require( 'gulp-util' );
-var sass			= require( 'gulp-sass' );
-var sourcemaps		= require( 'gulp-sourcemaps' );
-var autoprefixer	= require( 'gulp-autoprefixer' );
-var notify			= require( 'gulp-notify' );
-var rename			= require( 'gulp-rename' );
+import plumber from 'gulp-plumber';
+import gutil from 'gulp-util';
+import sass from 'gulp-sass';
+import sourcemaps from 'gulp-sourcemaps';
+import autoprefixer from 'gulp-autoprefixer';
+import notify from 'gulp-notify';
+import rename from 'gulp-rename';
 
 
 
-gulp.task( 'sass', [ 'sass:dev' ], function() {
+gulp.task( 'sass', [ 'sass:dev' ], () => {
 	
-	
-	
-});
+} );
 
 
-gulp.task( 'sass:dev', function() {
+gulp.task( 'sass:dev', () => {
 	
 	return gulp.src( paths.env.dev + paths.assets.css.app.allSCSS )
 		.pipe( plumber() )
@@ -30,9 +28,9 @@ gulp.task( 'sass:dev', function() {
 			outputStyle:		'compressed',
 			precision:			3,
 			emitCompileError:	true
-		} ).on( 'error', function( error ) {
-			var file	= error.relativePath.substr( error.relativePath.indexOf( '/assets/' ) + 8 );
-			var msg		= 'CSS error: ' + file + ' on line ' + error.line + ', column ' + error.column;
+		} ).on( 'error', ( error ) => {
+			const file	= error.relativePath.substr( error.relativePath.indexOf( '/assets/' ) + 8 );		
+			const msg	= 'CSS error: ' + file + ' on line ' + error.line + ', column ' + error.column;	
 			notify().write( msg );
 			console.log( gutil.colors.red( error.message ) );
 		} ) )
@@ -41,4 +39,4 @@ gulp.task( 'sass:dev', function() {
 		.pipe( sourcemaps.write( './maps' ) )
 		.pipe( gulp.dest( paths.env.dev + paths.assets.css.dir ) );
 	
-});
+} );

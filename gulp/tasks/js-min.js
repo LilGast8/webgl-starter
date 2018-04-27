@@ -1,23 +1,23 @@
-var gulp		= require( 'gulp' );
+import gulp from 'gulp';
 
-var paths		= require( '../utils/paths' );
+import paths from '../utils/paths';
 
-var browserify	= require( 'browserify' );
-var source		= require( 'vinyl-source-stream' );
-var buffer		= require( 'vinyl-buffer' );
-var uglify		= require( 'gulp-uglify' );
+import browserify from 'browserify';
+import source from 'vinyl-source-stream';
+import buffer from 'vinyl-buffer';
+import uglify from 'gulp-uglify';
 
-var notify		= require( 'gulp-notify' );
-var gutil		= require( 'gulp-util' );
+import notify from 'gulp-notify';
+import gutil from 'gulp-util';
 
-var glslify		= require( 'glslify' );
-var babelify	= require( 'babelify' );
+import glslify from 'glslify';
+import babelify from 'babelify';
 
 
 
-gulp.task( 'js-min', function() {
+gulp.task( 'js-min', () => {
 	
-	var options = {
+	const options = {
 		entries: 		[ paths.env.dev + paths.assets.js.app.dir + 'InitApp.js' ],
 		paths:			[
 							paths.env.dev + paths.assets.js.app.dir,
@@ -36,7 +36,7 @@ gulp.task( 'js-min', function() {
 		]
 	};
 	
-	var bundler	= browserify( options );
+	const bundler = browserify( options );
 	
 	
 	bundle( bundler );
@@ -47,7 +47,7 @@ gulp.task( 'js-min', function() {
 
 function bundle( bundler ) {
 	return bundler.bundle()
-		.on( 'error', function( error ) {
+		.on( 'error', ( error ) => {
 			notify().write( error.message );
 			console.log( gutil.colors.red( error.message ) );
 		} )

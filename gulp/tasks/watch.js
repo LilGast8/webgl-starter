@@ -1,14 +1,13 @@
-var gulp		= require( 'gulp' );
-var path		= require( 'path' );
+import gulp from 'gulp';
+import path from 'path';
 
-// var options		= require( '../utils/options' );
-var paths		= require( '../utils/paths' );
+import paths from '../utils/paths';
 
-var livereload	= require( 'gulp-livereload' );
-
+import livereload from 'gulp-livereload';
 
 
-gulp.task( 'watch', function() {
+
+gulp.task( 'watch', () => {
 	
 	livereload.listen();
 	
@@ -21,13 +20,12 @@ gulp.task( 'watch', function() {
 		/* Assets */
 		paths.env.dev + paths.assets.css.app.allFiles,
 		
-	], function( e ) {
+	], ( e ) => {
 		
-		var filePath, ext;
-		var taskname;
+		let taskname;
 		
-		filePath	= e.path;
-		ext			= path.extname( filePath );
+		const filePath	= e.path;
+		const ext		= path.extname( filePath );
 		
 		
 		/* SASS */
