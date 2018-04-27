@@ -2,10 +2,8 @@ var gulp		= require( 'gulp' );
 
 var paths		= require( '../utils/paths' );
 
-var plumber		= require( 'gulp-plumber' );
-
-var browserify	= require( 'browserify' );
 var watchify	= require( 'watchify' );
+var browserify	= require( 'browserify' );
 var source		= require( 'vinyl-source-stream' );
 var buffer		= require( 'vinyl-buffer' );
 var sourcemaps	= require( 'gulp-sourcemaps' );
@@ -21,7 +19,6 @@ var glslify		= require( 'glslify' );
 
 gulp.task( 'js', function() {
 	
-	// add custom browserify options here
 	var customOpts = {
 		// cache:			{},
 		// packageCache:	{},
@@ -33,41 +30,36 @@ gulp.task( 'js', function() {
 						],
 		debug: 			true,
 		
-		transform: [
-			// browserifyShim,
+		transform:		[
 			glslify
 		]
 	};
+	
 	var opts	= assign( {}, watchify.args, customOpts );
-	var b		= watchify( browserify( opts ) );
+	var bundler	= watchify( browserify( opts ) );
 	
 	
-	// on any dep update, runs the bundler
-	b.on( 'update', function() {
-		bundle( b );
+	bundler.on( 'update', function() {
+		bundle( bundler );
 	} );
-	b.on( 'log', gutil.log ); // output build logs to terminal
+	bundler.on( 'log', gutil.log );
 	
 	
-	bundle( b );
+	bundle( bundler );
 	
 } );
 
 
 
-function bundle( b ) {
-	return b.bundle()
-		// log errors if they happen
+function bundle( bundler ) {
+	return bundler.bundle()
 		.on( 'error', function( error ) {
 			notify().write( error.message );
 			console.log( gutil.colors.red( error.message ) );
 		} )
 		.pipe( source( 'scripts.js' ) )
-		// optional, remove if you don't need to buffer file contents
 		.pipe( buffer() )
-		// optional, remove if you dont want sourcemaps
-		.pipe( sourcemaps.init( { loadMaps: true } ) ) // loads map from browserify file
-			// Add transformation tasks to the pipeline here.
-		.pipe( sourcemaps.write('./maps') ) // writes .map file
+		.pipe( sourcemaps.init( { loadMaps: true } ) )
+		.pipe( sourcemaps.write('./maps') )
 		.pipe( gulp.dest( paths.env.dev + paths.assets.js.dir ) );
 }
