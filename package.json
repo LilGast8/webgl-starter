@@ -1,11 +1,25 @@
 {
-  "name": "webgl-starter",
-  "description": "",
-  "version": "0.0.1",
+  "name": "Webgl-starter",
+  "description": "A tiny & really basic WebGL starter.",
+  "version": "1.0.0",
   "author": {
     "name": "Gaston Bouchayer",
     "url": "http://www.gastonbouchayer.com"
   },
+  "homepage": "https://github.com/LilGast8/WebGL-starter",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:LilGast8/WebGL-starter.git"
+  },
+  "license": "CC-BY-NC-SA-4.0",
+  "keywords": [
+    "html5",
+    "javascript",
+    "es6",
+    "starter",
+    "gulp",
+    "webgl"
+  ],
   "main": "gulpfile.js",
   "dependencies": {},
   "devDependencies": {
