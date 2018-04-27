@@ -17,7 +17,7 @@ var babelify	= require( 'babelify' );
 
 gulp.task( 'js-min', function() {
 	
-	var customOpts = {
+	var options = {
 		entries: 		[ paths.env.dev + paths.assets.js.app.dir + 'InitApp.js' ],
 		paths:			[
 							paths.env.dev + paths.assets.js.app.dir,
@@ -36,7 +36,7 @@ gulp.task( 'js-min', function() {
 		]
 	};
 	
-	var bundler	= browserify( customOpts );
+	var bundler	= browserify( options );
 	
 	
 	bundle( bundler );

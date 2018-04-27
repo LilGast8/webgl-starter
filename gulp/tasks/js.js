@@ -19,10 +19,7 @@ var glslify		= require( 'glslify' );
 
 gulp.task( 'js', function() {
 	
-	var customOpts = {
-		// cache:			{},
-		// packageCache:	{},
-		// fullPaths:		true,
+	var customOptions = {
 		entries: 		[ paths.env.dev + paths.assets.js.app.dir + 'InitApp.js' ],
 		paths:			[
 							paths.env.dev + paths.assets.js.app.dir,
@@ -35,8 +32,8 @@ gulp.task( 'js', function() {
 		]
 	};
 	
-	var opts	= assign( {}, watchify.args, customOpts );
-	var bundler	= watchify( browserify( opts ) );
+	var options	= assign( {}, watchify.args, customOptions );
+	var bundler	= watchify( browserify( options ) );
 	
 	
 	bundler.on( 'update', function() {
