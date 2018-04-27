@@ -30,7 +30,7 @@ gulp.task( 'js-min', function() {
 			[
 				babelify, {
 					presets:	[ 'env' ],
-					ignore:		'**/zepto.min.js'
+					ignore:		[ 'zepto.min.js' ]
 				}
 			]
 		]
