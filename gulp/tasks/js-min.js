@@ -29,7 +29,7 @@ gulp.task( 'js-min', function() {
 			glslify,
 			[
 				babelify, {
-					presets:	[ 'es2015' ],
+					presets:	[ 'env' ],
 					ignore:		'**/zepto.min.js'
 				}
 			]
@@ -46,7 +46,7 @@ gulp.task( 'js-min', function() {
 
 
 function bundle( bundler ) {
-	bundler.bundle()
+	return bundler.bundle()
 		.on( 'error', function( error ) {
 			notify().write( error.message );
 			console.log( gutil.colors.red( error.message ) );
