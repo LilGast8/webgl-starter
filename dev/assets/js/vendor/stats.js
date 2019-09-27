@@ -1,3 +1,9 @@
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+	typeof define === 'function' && define.amd ? define(factory) :
+	(global.Stats = factory());
+}(this, (function () { 'use strict';
+
 /**
  * @author mrdoob / http://mrdoob.com/
  */
@@ -74,7 +80,7 @@ var Stats = function () {
 
 			msPanel.update( time - beginTime, 200 );
 
-			if ( time > prevTime + 1000 ) {
+			if ( time >= prevTime + 1000 ) {
 
 				fpsPanel.update( ( frames * 1000 ) / ( time - prevTime ), 100 );
 
@@ -168,8 +174,6 @@ Stats.Panel = function ( name, fg, bg ) {
 
 };
 
-if ( typeof module === 'object' ) {
+return Stats;
 
-	module.exports = Stats;
-
-}
+})));

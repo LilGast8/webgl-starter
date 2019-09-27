@@ -1,6 +1,6 @@
 
 
-require( 'greensock/TweenMax' );
+require( 'gsap/TweenMax' );
 
 const CustomEvent		= require( 'events/CustomEvent' );
 const Config			= require( 'configs/Config' );

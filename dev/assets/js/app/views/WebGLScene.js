@@ -1,7 +1,7 @@
 
 
-global.THREE	= require( 'three.js/three.min' );
-require( 'three.js/OrbitControls' );
+global.THREE = require( 'three' );
+require( 'three/examples/js/controls/OrbitControls' );
 
 const AbstractView	= require( 'abstracts/AbstractView' );
 const Config		= require( 'configs/Config' );
@@ -74,6 +74,8 @@ class WebGLScene extends AbstractView {
 	
 	raf() {
 		this.renderer.render( this.scene, this.camera );
+		if ( Config.WEBGL_DEBUG )
+			this.renderer.render( this.scene, this.cameraDebug );
 	}
 	
 	
@@ -116,18 +118,17 @@ class WebGLScene extends AbstractView {
 	
 	
 	_initHelpers() {
-		const cameraDebug = this.camera.clone();
-		this.add( cameraDebug );
-		this.camera.far = 100000;
-		this.camera.updateProjectionMatrix();
+		this.cameraDebug = new THREE.PerspectiveCamera( 45, Screen.bW / Screen.wH, 0.1, 10000000 );
+		this.cameraDebug.position.set( 150, 80, 150 );
+		this.add( this.cameraDebug );
 		
-		const controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
+		const controls = new THREE.OrbitControls( this.cameraDebug, this.renderer.domElement );
 		
-		const cameraHelper = new THREE.CameraHelper( cameraDebug );
+		const cameraHelper = new THREE.CameraHelper( this.camera );
 		this.add( cameraHelper );
 		
-		const axisHelper = new THREE.AxisHelper( 300 );
-		this.add( axisHelper );
+		const axesHelper = new THREE.AxesHelper( 300 );
+		this.add( axesHelper );
 	}
 	
 	

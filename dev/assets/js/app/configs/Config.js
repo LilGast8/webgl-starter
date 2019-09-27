@@ -9,7 +9,7 @@ class Config {
 	constructor() {
 		/* -------- Change them as you want -------- */
 		this.ENV				= 'dev'; // 'dev' or 'prod'
-		this.HAS_FPS_STATS		= false;
+		this.HAS_FPS_STATS		= true;
 		this.HAS_MEMORY_STATS	= false;
 		this.HAS_DAT_GUI		= false;
 		this.WEBGL_DEBUG		= true;
