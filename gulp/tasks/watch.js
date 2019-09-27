@@ -1,9 +1,9 @@
-import gulp from 'gulp';
-import path from 'path';
+const gulp			= require( 'gulp' );
+const path			= require( 'path' );
 
-import paths from '../utils/paths';
+const paths			= require( '../utils/paths' );
 
-import livereload from 'gulp-livereload';
+const livereload	= require( 'gulp-livereload' );
 
 
 

@@ -1,16 +1,16 @@
-import gulp from 'gulp';
-import path from 'path';
+const gulp			= require( 'gulp' );
+const path			= require( 'path' );
 
-import cssSupports from '../utils/css-supports';
-import paths from '../utils/paths';
+const cssSupports	= require( '../utils/css-supports' );
+const paths			= require( '../utils/paths' );
 
-import plumber from 'gulp-plumber';
-import gutil from 'gulp-util';
-import sass from 'gulp-sass';
-import sourcemaps from 'gulp-sourcemaps';
-import autoprefixer from 'gulp-autoprefixer';
-import notify from 'gulp-notify';
-import rename from 'gulp-rename';
+const plumber		= require( 'gulp-plumber' );
+const gutil			= require( 'gulp-util' );
+const sass			= require( 'gulp-sass' );
+const sourcemaps	= require( 'gulp-sourcemaps' );
+const autoprefixer	= require( 'gulp-autoprefixer' );
+const notify		= require( 'gulp-notify' );
+const rename		= require( 'gulp-rename' );
 
 
 

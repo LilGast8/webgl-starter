@@ -1,17 +1,17 @@
-import gulp from 'gulp';
+const gulp			= require( 'gulp' );
 
-import paths from '../utils/paths';
+const paths			= require( '../utils/paths' );
 
-import browserify from 'browserify';
-import source from 'vinyl-source-stream';
-import buffer from 'vinyl-buffer';
-import uglify from 'gulp-uglify';
+const browserify	= require( 'browserify' );
+const source		= require( 'vinyl-source-stream' );
+const buffer		= require( 'vinyl-buffer' );
+const uglify		= require( 'gulp-uglify' );
 
-import notify from 'gulp-notify';
-import gutil from 'gulp-util';
+const notify		= require( 'gulp-notify' );
+const gutil			= require( 'gulp-util' );
 
-import glslify from 'glslify';
-import babelify from 'babelify';
+const glslify		= require( 'glslify' );
+const babelify		= require( 'babelify' );
 
 
 
@@ -29,7 +29,10 @@ gulp.task( 'js-min', () => {
 			glslify,
 			[
 				babelify, {
-					presets:	[ 'env' ],
+					// presets:	[ 'env' ],
+					presets: [
+						[ '@babel/preset-env', { modules: false } ]
+					],
 					ignore:		[ 'zepto.min.js' ]
 				}
 			]

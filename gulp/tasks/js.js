@@ -1,19 +1,19 @@
-import gulp from 'gulp';
+const gulp			= require( 'gulp' );
 
-import paths from '../utils/paths';
+const paths			= require( '../utils/paths' );
 
-import watchify from 'watchify';
-import browserify from 'browserify';
-import source from 'vinyl-source-stream';
-import buffer from 'vinyl-buffer';
-import sourcemaps from 'gulp-sourcemaps';
+const watchify		= require( 'watchify' );
+const browserify	= require( 'browserify' );
+const source		= require( 'vinyl-source-stream' );
+const buffer		= require( 'vinyl-buffer' );
+const sourcemaps	= require( 'gulp-sourcemaps' );
 
-import assign from 'lodash.assign';
+const assign		= require( 'lodash.assign' );
 
-import notify from 'gulp-notify';
-import gutil from 'gulp-util';
+const notify		= require( 'gulp-notify' );
+const gutil			= require( 'gulp-util' );
 
-import glslify from 'glslify';
+const glslify		= require( 'glslify' );
 
 
 
