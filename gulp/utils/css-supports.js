@@ -1,4 +1,4 @@
-var cssSupports	= {
+const cssSupports	= {
 	browsers: [
 		'last 2 versions',
 		'> 1%'
